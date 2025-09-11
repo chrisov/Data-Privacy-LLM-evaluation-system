@@ -1,0 +1,11 @@
+{
+  "pii_detector_name": "ai4privacy/pii-masking-300k",
+  "NER_model_name": "dslim/bert-base-NER",
+  "model_name": "Qwen/Qwen2.5-1.5B-Instruct",
+  "dataset_name": "pii-bench/pii-benchmark",
+  "prompts_file_path": "../data/output.json",
+  "max_length": 128,
+  "batch_size": 8,
+  "num_epochs": 1,
+  "learning_rate": 5e-5
+}

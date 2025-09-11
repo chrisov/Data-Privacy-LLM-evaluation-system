@@ -1,22 +1,53 @@
-from utils import load_config
-from datasets import load_dataset
+import json
 import ast
 
-config = load_config()
-dataset = load_dataset(config["pii_detector_name"], split='validation')
-validation_examples = dataset.select(range(10))
+def process_pii_data(prompt):
+    """
+    Loads and processes a PII dataset, extracting PII entities and source texts.
 
-# validation_examples: Dataset type, inlcudes a list of rows containing the examples
-# Each row is a dataset with keys 'source_text' and 'span_labels' among others
-# For the span_labels, each label is a list of lists with 'start', 'end', and 'label' keys
-for example in validation_examples:
-    text = example['source_text']
-    span_labels = ast.literal_eval(example['span_labels'])
+    Args:
+        pii_name (str): The name of the dataset from Hugging Face Hub.
 
-    print(f"\n\n\nText: '{text}'\n\n\n\n")
-    if not span_labels:
-        print("No PII labels found.")
-    else:
-        for label_info in span_labels:
-            print(f"Label: '{label_info[-1]}'\n", f"Text: '{text[label_info[0]:label_info[1]]}'\n")
-    print("--------------------------------------")
+    Returns:
+        tuple: A tuple containing a list of all texts and a dictionary of extracted PII.
+    """
+
+    pii_data = {}
+    labels = ast.literal_eval(prompt['span_labels'])
+    text = prompt['source_text']
+    if labels:
+        for label in labels:
+            start_char = label[0]
+            end_char = label[1]
+            label_name = label[2]
+            pii_text = text[start_char:end_char]
+            if label_name not in pii_data:
+                pii_data[label_name] = []
+            pii_data[label_name].append(pii_text)
+    return pii_data
+
+def save_to_json(data, file_path):
+    """
+    Saves a list of dictionaries to a JSON file.
+    """
+
+    try:
+        with open(file_path, 'r') as file:
+            existing_data = json.load(file)
+            if not isinstance(existing_data, list):
+                existing_data = [existing_data]
+    except (FileNotFoundError, json.JSONDecodeError):
+        existing_data = []
+    existing_data.extend(data)
+    with open(file_path, 'w') as file:
+        json.dump(existing_data, file, indent=4)
+
+
+def clear_json_file(file_path):
+    """
+    Clears all content from a JSON file.
+    """
+
+    with open(file_path, 'w') as file:
+        pass  # The 'w' mode truncates the file, leaving it empty
+
