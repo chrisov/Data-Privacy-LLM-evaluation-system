@@ -19,38 +19,53 @@ from utils import load_config
 #     model = AutoModelForTokenClassification.from_pretrained(model_name, num_labels=num_labels)
 #     return model, tokenizer
 
-
-
 config = load_config()
 
-tokenizer = AutoTokenizer.from_pretrained(config['model_name'])
-model = AutoModelForTokenClassification.from_pretrained(config['model_name'])
+tokenizer = AutoTokenizer.from_pretrained(config['NER_model_name'])
+model = AutoModelForTokenClassification.from_pretrained(config['NER_model_name'])
 
 nlp = pipeline("ner", model=model, tokenizer=tokenizer)
 example = "My name is Wolfgang, I live in Berlin and I work at the Kostal Dental Office in Portugal"
 
 print(f"\nText: '{example}'\n")
 ner_results = nlp(example)
-entities = {}
-current_entity = None
-for result in ner_results:
-    entity_label = result['entity']
-    word = result['word']
-    if entity_label.startswith('B-'):
-        if current_entity:
-            entity_type = current_entity['entity'].split('-')[1]
-            entities[entity_type] = " ".join(current_entity['words']).replace(" ##", "")
-        current_entity = {
-            'entity': entity_label,
-            'words': [word]
-        }
-    elif entity_label.startswith('I-'):
-        if current_entity:
-            current_entity['words'].append(word)
-if current_entity:
-    entity_type = current_entity['entity'].split('-')[1]
-    entities[entity_type] = " ".join(current_entity['words']).replace("##", "")
-for entity_type, value in entities.items():
-    print(f"Entity: '{entity_type}', Value: '{value}'")
 
-print("\n\n", ner_results, "\n\n")
+final_entities = {}
+current_entity_words = []
+current_entity_type = None
+
+for result in ner_results:
+    word = result['word']
+    entity_label = result['entity']
+    if entity_label.startswith('B-'):
+        # Process and store the previous entity if one existed
+        if current_entity_words:
+            full_entity = "".join(current_entity_words).replace("##", "").replace(" ", " ")
+            if current_entity_type not in final_entities:
+                final_entities[current_entity_type] = []
+            final_entities[current_entity_type].append(full_entity)
+        # Start a new entity
+        current_entity_words = [word]
+        current_entity_type = entity_label.split('-')[1]
+
+    # Handle the continuation of an entity
+    elif entity_label.startswith('I-'):
+        if current_entity_words:
+            if word.startswith('##'):
+                current_entity_words.append(word)
+            else:
+                current_entity_words.append(" " + word)
+
+# Process and store the last entity after the loop
+if current_entity_words:
+    full_entity = "".join(current_entity_words).replace("##", "").replace(" ", " ")
+    if current_entity_type not in final_entities:
+        final_entities[current_entity_type] = []
+    final_entities[current_entity_type].append(full_entity)
+
+# Print the final results
+for entity_type, values in final_entities.items():
+    print(f"Entity: '{entity_type}', Values: {values}")
+
+# for info in ner_results:
+#     print(info)
