@@ -1,7 +1,7 @@
 import json
 import ast
 
-def process_pii_data(prompt):
+def process_pii_data(prompt: list) -> dict:
     """
     Loads and processes a PII dataset, extracting PII entities and source texts.
 
@@ -26,7 +26,7 @@ def process_pii_data(prompt):
             pii_data[label_name].append(pii_text)
     return pii_data
 
-def save_to_json(data, file_path):
+def save_to_json(data: list, file_path: str):
     """
     Saves a list of dictionaries to a JSON file.
     """
@@ -43,7 +43,7 @@ def save_to_json(data, file_path):
         json.dump(existing_data, file, indent=4)
 
 
-def clear_json_file(file_path):
+def clear_json_file(file_path: str):
     """
     Clears all content from a JSON file.
     """

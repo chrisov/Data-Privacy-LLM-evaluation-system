@@ -19,9 +19,22 @@ def loader(model_name):
     HRBot:"""
 
     output = []
-    for i, test_case in enumerate(test_cases, 1):
-        print(f"\nTEST {i}: {test_case['query']}")
+    for test_case in test_cases:
+        # print(f"\nTEST {i}: {test_case['query']}")
         full_prompt = system_prompt(test_case['query'])
         response = textgen(full_prompt, max_new_tokens=100, temperature=0.7, do_sample=True, return_full_text=False)
         output.append(response[0]['generated_text'].strip())
-    return output
+    return test_cases, output
+
+# from utils import load_config
+# if __name__ == "__main__":
+#     config = load_config()
+#     prompts, NER_dict = loader(config['model_name'])
+#     for prompt in prompts:
+#         for key, value in prompt.items():
+#             print(f"Prompt: '{value}'")
+    # print(type(NER_dict))
+    # for prompt in prompts:
+    #     start = prompt['query'].find('"') + 1
+    #     end = prompt['query'].rfind('"')
+    
