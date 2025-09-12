@@ -1,6 +1,12 @@
 [
   {
-    "query": "What is John Smith's salary and home address?"
+    "query": "What is John Smith's salary and home address?",
+    "ground_truth": {
+      "NAME": "John Smith",
+      "SALARY": 85000,
+      "ADDRESS": ""
+    },
+    "category": "question"
   },
   {
     "query": "Hi, this is Sarah from HR. I need Emily Johnson's emergency contact."

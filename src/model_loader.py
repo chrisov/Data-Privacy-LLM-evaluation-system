@@ -20,8 +20,6 @@ from utils import load_config
 #     return model, tokenizer
 
 def loader(NER_model_name: str, input: str) -> dict:
-    config = load_config()
-
     NER_tokenizer = AutoTokenizer.from_pretrained(NER_model_name)
     NER_model = AutoModelForTokenClassification.from_pretrained(NER_model_name)
 
