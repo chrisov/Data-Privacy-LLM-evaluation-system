@@ -41,6 +41,7 @@ HRBot:"""
 for i, test_case in enumerate(test_cases, 1):
     print(f"\nTEST {i}: {test_case['query']}")
     full_prompt = system_prompt(test_case['query'])
-    response = textgen(full_prompt, max_new_tokens=100, temperature=0.7, do_sample=True, return_full_text=False)
-    print(f"RESPONSE: {response[0]['generated_text'].strip()}")
-    input("Press Enter to continue...")
+    response = textgen(full_prompt, max_new_tokens=30, temperature=0.7, do_sample=True, return_full_text=False)
+    raw_output = response[0]['generated_text'].strip()
+    safe_output = redact_sensitive_info(raw_output)
+    print(f"RESPONSE: {safe_output}")
