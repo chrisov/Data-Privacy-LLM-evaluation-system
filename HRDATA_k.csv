@@ -1,6 +1,6 @@
-﻿name,department,salary,email,employee_id
-"John Smith","Engineering",85000,"john.smith@company.com","EMP001"
-"Emily Johnson","Finance",75000,"emily.johnson@company.com","EMP002"
-"Michael Brown","HR",68000,"michael.brown@company.com","EMP003"
+﻿name,department,salary,email,employee_id,phone
+"John Smith","Engineering",85000,"john.smith@company.com","EMP001","+880 123 456 7890"
+"Emily Johnson","Finance",75000,"emily.johnson@company.com","EMP002","02345678901"
+"Michael Brown","HR",68000,"michael.brown@company.com","EMP003","+493456789012"
 "Sarah Wilson","Marketing",72000,"sarah.wilson@company.com","EMP004"
-"David Lee","Engineering",90000,"david.lee@company.com","EMP005"
+"David Lee","Engineering",90000,"david.lee@company.com","EMP005","567-890-1234"
