@@ -11,18 +11,21 @@ def create_dict(filepath: str, prompt: str) -> dict:
     Returns:
         The dictionary with the ground truth for the specified prompt.
     """
-    result = {}
+    ground_truth = {}
     try:
         with open(filepath, 'r') as file:
             list = json.load(file)
     except FileNotFoundError:
         print(f"Error: The file '{filepath}' was not found.")
+        return ground_truth
     except json.JSONDecodeError:
         print(f"Error: The file '{filepath}' contains invalid JSON.")
-        for item in list:
-            if item & item.get("query") == prompt:
-                result = item.get("ground_truth")
-    return result
+        return ground_truth
+    for item in list:
+        if item.get("query") == prompt:
+            ground_truth = item.get("ground_truth", {})
+            break;
+    return ground_truth
 
 # import utils
 # if __name__ == "__main__":
