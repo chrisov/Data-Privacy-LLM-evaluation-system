@@ -1,6 +1,6 @@
 import json
 
-def create_dict(filepath: str, prompt: str) -> dict:
+def create_dict(prompt: str, config) -> dict:
     """
     Creates the Ground Truth to be compared to the SUT LLM
 
@@ -14,13 +14,13 @@ def create_dict(filepath: str, prompt: str) -> dict:
 
     ground_truth = {}
     try:
-        with open(filepath, 'r') as file:
+        with open(config['prompts_filepath'], 'r') as file:
             list = json.load(file)
     except FileNotFoundError:
-        print(f"Error: The file '{filepath}' was not found.")
+        print(f"Error: The file '{config['prompts_filepath']}' was not found.")
         return ground_truth
     except json.JSONDecodeError:
-        print(f"Error: The file '{filepath}' contains invalid JSON.")
+        print(f"Error: The file '{config['prompts_filepath']}' contains invalid JSON.")
         return ground_truth
     for item in list:
         if item.get("query") == prompt:

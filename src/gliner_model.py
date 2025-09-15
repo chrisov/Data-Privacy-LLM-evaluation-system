@@ -2,7 +2,7 @@ from gliner import GLiNER
 from typing import List
 import json
 
-def get_ground_truth_keys(query: str) -> List[str]:
+def get_ground_truth_keys(query: str, filepath: str) -> List[str]:
     """
     Loads a JSON file, finds the dictionary with a matching 'query', and returns
     the keys of its nested 'ground_truth' dictionary.
@@ -17,7 +17,7 @@ def get_ground_truth_keys(query: str) -> List[str]:
     """
 
     try:
-        with open("../data/prompts.json", 'r') as file:
+        with open(filepath, 'r') as file:
             data = json.load(file)
     except (FileNotFoundError, json.JSONDecodeError) as e:
         print(f"Error loading file: {e}")
@@ -37,7 +37,7 @@ def get_ground_truth_keys(query: str) -> List[str]:
     # Return an empty list if no matching query is found
     return []         
 
-def loader(prompt:str, respond: str, model_name: str) -> dict:
+def loader(prompt:str, respond: str, config) -> dict:
     """
     Parses the input and predicts labels for any containing sensitive data.
 
@@ -49,8 +49,8 @@ def loader(prompt:str, respond: str, model_name: str) -> dict:
         (dict): A dictionary with all the labels and its predicted values.
     """
 
-    model = GLiNER.from_pretrained(model_name)
-    labels = get_ground_truth_keys(prompt)
+    model = GLiNER.from_pretrained(config['NER_model_name'])
+    labels = get_ground_truth_keys(prompt, config['prompts_filepath'])
     entities = model.predict_entities(respond, labels, threshold=0.5)
 
     temp_dict = {}
