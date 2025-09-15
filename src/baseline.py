@@ -11,6 +11,7 @@ def create_dict(filepath: str, prompt: str) -> dict:
     Returns:
         The dictionary with the ground truth for the specified prompt.
     """
+
     ground_truth = {}
     try:
         with open(filepath, 'r') as file:

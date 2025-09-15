@@ -1,6 +1,5 @@
 from transformers import pipeline
 import pandas as pd
-import json
 
 def loader(model_name: str, prompt: str) -> str:
     """
