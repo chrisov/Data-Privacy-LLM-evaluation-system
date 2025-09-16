@@ -3,6 +3,7 @@
   "dataset_name": "../data/HRDATA2.csv",
   "prompts_filepath": "../data/prompts2.json",
   "NER_model_name": "E3-JSI/gliner-multi-pii-domains-v1",
+  "iterations": 5,
   "max_length": 128,
   "batch_size": 8,
   "num_epochs": 1,
