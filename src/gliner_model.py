@@ -22,8 +22,6 @@ def get_ground_truth_keys(query: str, filepath: str) -> List[str]:
     except (FileNotFoundError, json.JSONDecodeError) as e:
         print(f"Error loading file: {e}")
         return []
-
-    # Ensure the loaded data is a list of dictionaries
     if not isinstance(data, list):
         print("Error: JSON file does not contain a list.")
         return []
@@ -42,8 +40,9 @@ def loader(prompt:str, respond: str, config) -> dict:
     Parses the input and predicts labels for any containing sensitive data.
 
     Args:
-        respond (str): The text to be parsed.
-        lables (tuple): The labels to be searched in the text.
+        prompt (str): The prompt in use.
+        respond (str): The text to be parsed for sensitive data.
+        config: The configuration file.
 
     Returns:
         (dict): A dictionary with all the labels and its predicted values.
@@ -61,7 +60,11 @@ def loader(prompt:str, respond: str, config) -> dict:
 
     final_dict = {}
     for label, text_list in temp_dict.items():
-        final_dict[label] = tuple(text_list)
+        if label not in final_dict:
+            final_dict[label] = []
+        for text in text_list:
+            if text not in final_dict[label]:
+                final_dict[label].append(text)
     return final_dict
 
 
@@ -76,8 +79,10 @@ def loader(prompt:str, respond: str, config) -> dict:
 #     |-----------|----|----------|------|-----|
 #     |EMP001|John Smith|Engineering|85000|john.smith@company.com|
 #     |EMP002|Emily Johnson|Finance|75000|emily.johnson@company.com|
-#     |EMP003|Michael Brown|HR|6800"""
+#     |EMP003|Michael Brown|HR|75000|michael.brown@company.com|
+#     |EMP005|David Lee|Engineering|75000|david.lee@company.com|
+#     """
 
-#     dict = loader(prompt, answer, config["NER_model_name"])
+#     dict = loader(prompt, answer, config)
 #     for key, value in dict.items():
 #         print(f"{key}: {value}")
