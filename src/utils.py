@@ -14,15 +14,19 @@ def load_config(path="/Users/j.chrisov/Documents/LEVEL3-projects/llm-evaluation/
     with open(path, "r") as f:
         return json.load(f)
 
+
+
 def load_json(filepath: str, key: str) -> dict:
     """
-    Parses the json file.
+    Parses the json file and returns the specified value.
     
     Args:
         filepath (str): Path to the json's path.
+        key (str): The requested key from which we will extract is value 
         
     Returns:
-        list: list of the spicified key."""
+        list: The specified key's values.
+    """
     values = []
 
     try:
@@ -44,6 +48,17 @@ def load_json(filepath: str, key: str) -> dict:
     else:
         print("The JSON data is empty or invalid.")
     return values
+
+def print_dicts(sut: dict, truth: dict):
+    print("Sensitive data: ")
+    for key, value in sut.items():
+        print(f"{key}: {value}")
+    print("\nGround truth: ")
+    if (truth):
+        for key, value in truth.items():
+            print(f"{key}: {value}")
+    else:
+        print("No ground truth!\n")
 
 # if __name__ == "__main__":
 #     config = load_config()
