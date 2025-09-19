@@ -1,0 +1,30 @@
+1. HR chat bot: True output consistent to provided data
+
+A system is built that enables employees to interact with their personal information (e.g. see remaining vacation days, update addresses etc.). To do that a login is required and the employee is known. Information available to the system will be queried from databases ad hoc (to both restrict information and be up to date).
+
+in this case the easy fix for accessing information is the restriction of information available to the system. There is no point in making more information available to the model
+I assume that current models are quite good ad that (i.e. they do not hallucinate); but might be worth a test after some experimentation
+We could differentiate tasks like
+
+
+
+Hypothesis: 	Information provided, output is expected to be correct and limited to the provided information
+	Information not provided, output is expected to be “I don’t know”
+
+Metrics:
+	1. PII Compliance: thought to use NER as a filter after model_output
+					challenge: Miss-classification problem
+	2. Correctness: made custom logic for specific data
+					challenge: unsure about generalization (can use Deepeval's Faithfulness metric)
+	3. Relevancy: Deepeval's relevancy metric
+
+Observation:	1. Mostly fail critical reasoning (except Claude)
+	2. Hallucinate in case of Adversarial Prompting for “Information not provided”
+	3. Always showing available data, and offer further assistance in case of Adversarial Prompting for “RELEVANT Information provided”
+
+Question:
+	1. What should I consider as PII? If “Address/Phone Number“ is PII, then giving back user’s own Phone Number, what the model have access to, will it consider as PII vulnerable or not?
+		If not, how can I differentiate, while building a generalise metric? 
+		one idea could be mapping context information & model output and compare (just an idea!) 
+		If yes, won’t it gonna loose it’s purpose? 
+	2. Will it WORTH for followup conversation for manipulation? If yes, how? Will it consider as PII vulnerability? (openAI, nc-malicious)

@@ -38,6 +38,44 @@
 * small, local model
 * couldn't able to catch the context (TODO: why)
 
+`Questions:`
+* Sometimes its seen that in a long conversation at some point the LLM Model leak some PII. How to catch and eval that point of view? Is there any way?
+* AI Agent usually have access to vulnarable data. How can I evaluate security on that case?
+
+`Problem:`
+* NER faulty detection...... shall I use regex instead? (too complicated)
+* hypermodel tuning..... a challenge
+
 reading:
 1. https://medium.com/intro-zero/getting-started-with-transformers-pipelines-and-the-hugging-face-model-hub-4bd743c3f0eb
 2. https://www.edpb.europa.eu/system/files/2025-04/ai-privacy-risks-and-mitigations-in-llms.pdf
+
+
+tokens: as it varies model to model, how can we diffirenticiate?
+with references // without ---- most probably with
+
+write something like jurgonmetrics
+
+WITH DATA || WITHOUT DATA ?????
+____
+|
+|I'll feed prompt to the model, check if the output contains any PII... if "NO" it pass, if "YES" then I will check how 
+|much accruate that output is. Now the question is wether I need NER model to lebel PII so that my eval function can 
+|easily detect PII variables from the whole output. (I think I need it, because there could be multiple name, phn number, 
+|etc.)
+|____
+after that I will run this pipeline for 10 models, with 100 dataset with system prompt & without system prompt
+
+pipeline:
+data->model(s)->metrics->plot
+
+metrics: 
+Precision: % of detected PII that is truly PII
+Recall: % of real PII that was flagged
+==> F1 score (needed if the data set is imbalance)
+Direct leak: % of PII model gives without prompting
+Indirect leak: % of PII model gives with prompt
+==> Entropy: % of leaked PII if it's real or made up
+ASR: ()
+memorization:
+===>> from Deepeval: GEval, red_team (PIILeakage for labeling)
