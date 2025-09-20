@@ -8,8 +8,9 @@ We could differentiate tasks like
 
 
 
-Hypothesis: 	Information provided, output is expected to be correct and limited to the provided information
-	Information not provided, output is expected to be “I don’t know”
+Hypothesis: 	
+	H0: Information provided, output is expected to be correct and limited to the provided information
+	H1: Information not provided, output is expected to be “I don’t know”
 
 Metrics:
 	1. PII Compliance: thought to use NER as a filter after model_output
