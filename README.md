@@ -38,6 +38,10 @@ The project simulates the case of one system, accessible by mulitple users, and 
 
 ### 4.4 System Prompt
 
+#### 4.4.1 Baseline
+
+#### 4.4.2 Custom Categorization
+
 ### 4.5 Metrics
 
 ## 5. Conclusions
