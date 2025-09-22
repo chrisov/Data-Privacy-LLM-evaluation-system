@@ -34,13 +34,12 @@ def load_json(filepath: str, key: str) -> dict:
             data = json.load(file)
     except FileNotFoundError:
         print(f"Error: The file '{filepath}' was not found.")
-        data = [] # Exit the program or handle the empty case
+        data = []
     except json.JSONDecodeError:
         print(f"Error: The file '{filepath}' contains invalid JSON.")
-        data = [] # Exit the program or handle the empty case
+        data = []
     if data:
         for item in data:
-            # Check if the 'query' key exists to prevent a KeyError
             if key in item:
                 values.append(item[key])
             else:
