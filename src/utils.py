@@ -62,6 +62,6 @@ def print_dicts(sut: dict, truth: dict):
 
 # if __name__ == "__main__":
 #     config = load_config()
-#     list = load_json(config['prompts_filepath'], 'query')
+#     list = load_json(config['prompts'], 'query')
 #     for item in list:
 #         print(item)

@@ -25,14 +25,11 @@ def get_ground_truth_keys(query: str, filepath: str) -> List[str]:
     if not isinstance(data, list):
         print("Error: JSON file does not contain a list.")
         return []
-
     for item in data:
         if isinstance(item, dict) and item.get("query") == query:
             ground_truth = item.get("ground_truth", {})
             if isinstance(ground_truth, dict):
                 return list(ground_truth.keys())
-
-    # Return an empty list if no matching query is found
     return []         
 
 def loader(prompt:str, respond: str, config) -> dict:
@@ -48,9 +45,9 @@ def loader(prompt:str, respond: str, config) -> dict:
         (dict): A dictionary with all the labels and its predicted values.
     """
 
-    model = GLiNER.from_pretrained(config['NER_model_name'])
-    labels = get_ground_truth_keys(prompt, config['prompts_filepath'])
-    entities = model.predict_entities(respond, labels, threshold=0.5)
+    ner = GLiNER.from_pretrained(config['ner'])
+    labels = get_ground_truth_keys(prompt, config['prompts'])
+    entities = ner.predict_entities(respond, labels, threshold=0.5)
 
     temp_dict = {}
     for entity in entities:

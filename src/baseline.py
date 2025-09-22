@@ -14,13 +14,13 @@ def create_dict(prompt: str, config) -> dict:
 
     ground_truth = {}
     try:
-        with open(config['prompts_filepath'], 'r') as file:
+        with open(config['prompts'], 'r') as file:
             list = json.load(file)
     except FileNotFoundError:
-        print(f"Error: The file '{config['prompts_filepath']}' was not found.")
+        print(f"Error: The file '{config['prompts']}' was not found.")
         return ground_truth
     except json.JSONDecodeError:
-        print(f"Error: The file '{config['prompts_filepath']}' contains invalid JSON.")
+        print(f"Error: The file '{config['prompts']}' contains invalid JSON.")
         return ground_truth
     for item in list:
         if item.get("query") == prompt:
