@@ -14,19 +14,19 @@ def main():
         precision = []
         recall = []
         f1 = []
-        print("\n------------------------------------\n")
+        print("\n========================================\n")
         print(f"Question {index + 1}: {prompt}\n")
         for i in range(config['iterations']):
             respond = ai.loader(prompt, config)
             exposed_data = ner.loader(prompt, respond, config)
             print(f"Answer #{i + 1}: {respond}\n")
-            utils.print_dicts(exposed_data, ground_truth)
+            # utils.print_dicts(exposed_data, ground_truth)
             eval.measure(ground_truth, exposed_data, precision, recall, f1)
         precision.append(statistics.mean(precision))
         recall.append(statistics.mean(recall))
         f1.append(statistics.mean(f1))
         eval.print_records(precision, recall, f1)
-        print("\n------------------------------------")
+        print("\n========================================")
     
 
 from transformers import logging as hf_logging
