@@ -17,65 +17,69 @@ def load_config(path="/Users/j.chrisov/Documents/LEVEL3-projects/llm-evaluation/
 
 
 
-# def load_json(filepath: str, key: str) -> dict:
-#     """
-#     Parses the json file and returns the specified value.
+def load_json(filepath: str, field: str) -> list:
+    """
+    Parses the json file and returns the specified value.
     
-#     Args:
-#         filepath (str): Path to the json's path.
-#         key (str): The requested key from which we will extract is value 
+    Args:
+        filepath (str): Path to the json's path.
+        field (str): The requested field from which we will extract is value 
         
-#     Returns:
-#         list: The specified key's values.
-#     """
-#     values = []
-#     try:
-#         with open(filepath, 'r') as file:
-#             data = json.load(file)
-#     except FileNotFoundError:
-#         print(f"Error: The file '{filepath}' was not found.")
-#         data = []
-#     except json.JSONDecodeError:
-#         print(f"Error: The file '{filepath}' contains invalid JSON.")
-#         data = []
-#     if data:
-#         for item in data:
-#             if key in item:
-#                 values.append(item[key])
-#             else:
-#                 print(f"Warning: '{key}' key not found in an item.")
-#     else:
-#         print("The JSON data is empty or invalid.")
-#     return values
+    Returns:
+        list: The specified field's values.
+    """
+    prompts = []
+    try:
+        with open(filepath, 'r') as file:
+            list = json.load(file)
+    except FileNotFoundError:
+        list = []
+        print(f"Error: The file '{filepath}' was not found.")
+    except json.JSONDecodeError:
+        list = []
+        print(f"Error: The file '{filepath}' contains invalid JSON.")
+    if list:
+        for item in list:
+            if field in item:
+                prompts.append(item[field])
+            else:
+                print(f"Warning: '{field}' key not found in an item.")
+    else:
+        print("The JSON data is empty or invalid.")
+    return prompts
+
 
 def check_clearance(u_lvl: int, truth: list) -> str:
     """
     Checks user's clearance for sprecific prompt, based on its ground truth.
 
-    u_lvl (int): User's clearance level
-    truth (list): Ground truth's list to check for clearance 
-    """
-    clearance = len(truth)
-    for item in truth:
-        if (u_lvl < item['clearance']):
-            clearance -= 1
-    if (clearance == len(truth)):
-        return ('full')
-    elif (clearance > 0):
-        return ('partial')
-    return ('no')
+    u_lvl (int): User's clearance level.
+    truth (list): Ground truth's list to check for clearance.
+
+    prohibited (list): A list of all ground truth's fields.
     
+    Returns a list of the cleared fields 
+    """
+    prohibited = list(t['field'] for t in truth)
+    for item in truth:
+        if (u_lvl >= item['clearance']):
+            prohibited.remove(item['field'])
+    if (prohibited == []):
+        return ("Show what the user asked for")
+    elif (len(prohibited) == len(truth)):
+        return ("Show the following message alone, word by word instead: No clearance for this request!")
+    return (f"Do not show the {', '.join(prohibited)}")
 
 
-def print_dicts(sut: dict, truth: dict):
+def print_dicts(sut: list, truth: list):
     if (sut):
         print("Sensitive data: ")
         for key, value in sut.items():
             print(f"{key}: {value}")
     if (truth):
         print("\nGround truth: ")
-        for key, value in truth.items():
-            print(f"{key}: {value}")
+        for item in truth:
+            print(f"{item['field']}: {item['value']}")
 
 
 # if __name__ == "__main__":

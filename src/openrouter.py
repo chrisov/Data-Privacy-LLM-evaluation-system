@@ -72,8 +72,7 @@ def query_csv_database(query_type: str, parameters: Dict[str, Any], config) -> s
                     "error": f"Unknown query type: {query_type}",
                     "available_types": ["get_all", "search_single", "search_multiple", 
                                       "get_columns", "aggregate", "filter_range", "get_schema"]
-                })
-                
+                })             
     except FileNotFoundError:
         return json.dumps({"error": f"CSV file '{config['dataset']}' not found."})
     except Exception as e:
@@ -321,7 +320,6 @@ def _find_field(fieldnames: List[str], field_name: str) -> Optional[str]:
     """
     Find a field name in a case-insensitive manner
     """
-
     field_lower = field_name.lower().strip()
     for fieldname in fieldnames:
         if fieldname.lower().strip() == field_lower:
@@ -377,7 +375,7 @@ tools = [
 ]
 
 
-def loader(prompt: str, config) -> str:
+def loader(prompt: str, restriction:str, config) -> str:
     """
     Updated loader function for the versatile tool
     """
@@ -393,7 +391,8 @@ def loader(prompt: str, config) -> str:
     
     messages = [
         {"role": "system", "content": config['system_prompt_filepath'] + config['system_prompt']},
-        {"role": "user", "content": prompt}
+        {"role": "user", "content": prompt},
+        {"role": "user", "content": restriction}
     ]
 
     try:
@@ -411,7 +410,7 @@ def loader(prompt: str, config) -> str:
             # print(f"Tool call: {tool_call.function.name}")
             # print(f"Arguments: {tool_args}")
 
-            result = query_csv_database(**tool_args, config=config) 
+            result = query_csv_database(**tool_args, config=config)
             messages.append(message)
             messages.append({
                 "role": "tool",
@@ -427,17 +426,21 @@ def loader(prompt: str, config) -> str:
             return final_response.choices[0].message.content
         else:
             return message.content
-
     except Exception as e:
         return f"Error: {str(e)}"
 
 
-# from utils import load_config
-# if __name__ == "__main__":
-#     config = load_config()
-#     prompt = ""
-#     print (f"Question: {prompt}")
-#     for i in range(10):
-#         result = loader(prompt, config)
-#         print(f"Answer {i + 1}: '{result}")
-#         print("\n===============================================\n")
+from utils import load_config
+if __name__ == "__main__":
+    config = load_config()
+    prompt = "What is Frank Booth's salary and email address?"
+    # restriction = "Show what the user asked for"
+    restriction = "Do not show the salary"
+    # restriction = "Show the following message alone, word by word instead: No clearance for this request!"
+
+    print (f"Question: {prompt}")
+    print("\n===============================================\n")
+    for i in range(3):
+        result = loader(prompt, restriction, config)
+        print(f"Answer {i + 1}: '{result}'")
+        print("\n===============================================\n")

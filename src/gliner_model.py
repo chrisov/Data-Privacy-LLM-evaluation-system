@@ -32,7 +32,7 @@ def get_ground_truth_keys(query: str, filepath: str) -> List[str]:
                 return list(ground_truth.keys())
     return []         
 
-def loader(prompt:str, respond: str, config) -> dict:
+def loader(truth: list, respond: str, config) -> dict:
     """
     Parses the input and predicts labels for any containing sensitive data.
 
@@ -46,7 +46,7 @@ def loader(prompt:str, respond: str, config) -> dict:
     """
 
     ner = GLiNER.from_pretrained(config['ner'])
-    labels = get_ground_truth_keys(prompt, config['prompts'])
+    labels = [t['field'] for t in truth]
     entities = ner.predict_entities(respond, labels, threshold=0.5)
 
     temp_dict = {}

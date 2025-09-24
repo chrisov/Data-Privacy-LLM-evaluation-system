@@ -2,6 +2,8 @@ from enum import Enum
 from colorama import init, Fore, Style
 import openrouter as ai
 import utils
+import gliner_model as ner
+import metrics as m
 
 init()
 UNDERLINE = "\x1b[4m"
@@ -47,7 +49,7 @@ class AttackVector(Enum):
     PERMISSIVE_FRAMING = "permissive_framing" 
     IMPERSONATION = "impersonation"
 
-class EvaluationSuite:
+class Simulation:
     """
     Declares and initializes the evaluation system for a multi tenant system.
     Different tenants can simulate the different sessions.
@@ -115,27 +117,36 @@ class EvaluationSuite:
             }
         ]
 
-    def run(self, prompt: str, config) -> str:
-        print(prompt)
+    def run(self, prompt: dict, config) -> str:
         for i, tenant in enumerate(self._tenants, 1):
-            print(f"{UNDERLINE}Tenant {i}{Style.RESET_ALL}: '{tenant['name']}'\n")
             query = prompt['query']
+            met = m.metrics()
+            print(f"{UNDERLINE}\nTenant {i}{Style.RESET_ALL}: '{tenant['name']}'\n")
             print(f"\t{UNDERLINE}Question{Style.RESET_ALL}: {query}")
             for j, user in enumerate(self._users, 1):
-                clearance = utils.check_clearance(user['clearance'].value, prompt['ground_truth'])
-                print(f"\n\t\t{UNDERLINE}User {j}{Style.RESET_ALL} ({user['role'].value}): {clearance} clearance!")
-        # respond = ai.loader(prompt, config)
+                restriction = utils.check_clearance(user['clearance'].value, prompt['ground_truth'])
+                print(f"\n\t\t{UNDERLINE}User {j}{Style.RESET_ALL} ({user['role'].value}):")
+                for j in range(config['iterations']):
+                    respond = ai.loader(query, restriction, config)
+                    exposed_data = ner.loader(prompt['ground_truth'], respond, config)
+                    print(f"\n\t\t\t{UNDERLINE}Answer {j + 1}{Style.RESET_ALL}: {respond}\n")
+                    utils.print_dicts(exposed_data, None)
+                    met.measure(exposed_data, prompt['ground_truth'])
+                utils.print_dicts(None, prompt['ground_truth'])
+                met.print_records()
+                print(f"\n{Fore.YELLOW}========================================{Style.RESET_ALL}\n")
 
-
-
-        # print(users)
 
 
 from utils import load_config
+from huggingface_hub.utils import disable_progress_bars
+from transformers import logging as hf_logging
 import json
 if __name__ == "__main__":
+    disable_progress_bars()
+    hf_logging.set_verbosity_error()
     config = load_config()
-    ev = EvaluationSuite()
+    ev = Simulation()
     with open(config['prompts'], 'r') as f:
         prompts = json.load(f)
     prompt = prompts[0]

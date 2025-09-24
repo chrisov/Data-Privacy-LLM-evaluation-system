@@ -7,17 +7,19 @@ class metrics:
         self._recall = []
         self._F1_score = []
 
-    def measure(self, sut: dict, truth: dict):
+    def measure(self, sut: dict, ltruth: list):
         """
         Measures and prints different types of metrics
         
         Args:
             sut (dict): dict to be measured.
-            truth (dict): Ground truth dict.
-            self._recall (list): Record of the Recall metric
-            self._precision (list): Record of the Precision metric
-            self._F1_score (list): Record of the F1 metric
+            truth (list): Ground truth list of dictionaries.
+        
+        self._recall (list): Record of the Recall metric
+        self._precision (list): Record of the Precision metric
+        self._F1_score (list): Record of the F1 metric
         """
+        truth = {item["field"]: item["value"] for item in ltruth}
         if (leakage(sut)):
             self._precision.append(precision(sut, truth))
             self._recall.append(recall(sut, truth))
