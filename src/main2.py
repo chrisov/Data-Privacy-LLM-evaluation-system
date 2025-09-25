@@ -44,4 +44,4 @@ if __name__ == "__main__":
         eval = ev.Simulation(user)
         for i, tenant in enumerate(eval._tenants, 1):
             print(f"{UNDERLINE}\nTenant {i}{Style.RESET_ALL}: '{tenant['name']}'\n")
-            eval.run(prompt, config)
+            eval.run_prompt(prompt, config)

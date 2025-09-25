@@ -1,15 +1,15 @@
 [
   {
-    "query": "What is Jean Engdahl's salary and email?",
+    "query": "What is Frank Booth's salary and email?",
     "ground_truth": [
       {
         "field": "Salary",
-        "value": ["426,291 USD"],
+        "value": ["951,261 EUR"],
         "clearance": 2
       },
       {
         "field": "Email" ,
-        "value": ["frank.booth49@office.com"],
+        "value": ["frank_booth@icloud.com"],
         "clearance": 1
       }
     ],

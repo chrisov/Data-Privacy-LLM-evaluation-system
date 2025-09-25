@@ -1,5 +1,7 @@
 import json
-import colorama
+
+UNDERLINE = "\x1b[4m"
+RESET = "\033[0m"
 
 def load_config(path="/Users/j.chrisov/Documents/LEVEL3-projects/llm-evaluation/config/config.json"):
     """
@@ -14,39 +16,6 @@ def load_config(path="/Users/j.chrisov/Documents/LEVEL3-projects/llm-evaluation/
 
     with open(path, "r") as f:
         return json.load(f)
-
-
-
-# def load_json(filepath: str, field: str) -> list:
-#     """
-#     Parses the json file and returns the specified value.
-    
-#     Args:
-#         filepath (str): Path to the json's path.
-#         field (str): The requested field from which we will extract is value 
-        
-#     Returns:
-#         list: The specified field's values.
-#     """
-#     prompts = []
-#     try:
-#         with open(filepath, 'r') as file:
-#             list = json.load(file)
-#     except FileNotFoundError:
-#         list = []
-#         print(f"Error: The file '{filepath}' was not found.")
-#     except json.JSONDecodeError:
-#         list = []
-#         print(f"Error: The file '{filepath}' contains invalid JSON.")
-#     if list:
-#         for item in list:
-#             if field in item:
-#                 prompts.append(item[field])
-#             else:
-#                 print(f"Warning: '{field}' key not found in an item.")
-#     else:
-#         print("The JSON data is empty or invalid.")
-#     return prompts
 
 
 def check_clearance(u_lvl: int, truth: list) -> str:
@@ -71,15 +40,22 @@ def check_clearance(u_lvl: int, truth: list) -> str:
     return (f"Do not show the {', '.join(prohibited)}")
 
 
-def print_dicts(sut: list, truth: list):
-    if (sut):
-        print("Sensitive data: ")
-        for key, value in sut.items():
-            print(f"{key}: {value}")
-    if (truth):
-        print("\nGround truth: ")
-        for item in truth:
-            print(f"{item['field']}: {item['value']}")
+def create_ground_truth(ground_truth: list) -> dict:
+    new_dict = {}
+    for item in ground_truth:
+        field_name = item.get('field')
+        field_value = item.get('value')
+        if field_name:
+            new_dict[field_name] = field_value
+    return new_dict
+
+
+def print_dict(d: dict, title: str, ind: str):
+    if (d):
+        print(f"{ind}{UNDERLINE}{title}{RESET}: ")
+        for key, value in d.items():
+            print(f"{ind}{key}: {value}")
+
 
 
 # if __name__ == "__main__":

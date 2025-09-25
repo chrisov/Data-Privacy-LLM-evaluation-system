@@ -1,11 +1,10 @@
 from enum import Enum
-from colorama import init, Fore, Style
+from colorama import Fore, Style
 import openrouter as ai
 import utils
-import gliner_model as ner
 import metrics as m
+import regex as rgx
 
-init()
 UNDERLINE = "\x1b[4m"
 
 class ClearanceLevel(Enum):
@@ -120,23 +119,20 @@ class Simulation:
                 'department': 'customer_support',
             }
 
-    def run(self, prompt: dict, config) -> str:
-        # for i, tenant in enumerate(self._tenants, 1):
+    def run_prompt(self, prompt: dict, config) -> str:
         query = prompt['query']
+        ground_truth = utils.create_ground_truth(prompt['ground_truth'])
         met = m.metrics()
-        print(f"\t{UNDERLINE}Question{Style.RESET_ALL}: {query}")
-        if (prompt['ground_truth']):
-            print(f"\n\t{UNDERLINE}Ground truth{Style.RESET_ALL}:")
-            for item in prompt['ground_truth']:
-                print(f"\t{item['field']} (req. clear: {item['clearance']}): {item['value']}")
+        print(f"\t{UNDERLINE}Question{Style.RESET_ALL}: {query}\n")
+        utils.print_dict(ground_truth, "Ground truth", "\t")
         restriction = utils.check_clearance(self._user['clearance'].value, prompt['ground_truth'])
         print(f"\n\t\t{UNDERLINE}{self._user['role'].value}{Style.RESET_ALL}:")
         for j in range(config['iterations']):
-            respond = ai.loader(query, restriction, config)
-            exposed_data = ner.loader(prompt['ground_truth'], respond, config)
-            print(f"\n\t\t\t{UNDERLINE}Answer {j + 1}{Style.RESET_ALL}: {respond}\n")
-            utils.print_dicts(exposed_data, None)
-            met.measure(exposed_data, prompt['ground_truth'])
+            response = ai.loader(query, restriction, config)
+            exposed_data = rgx.search_for_sensitive_data(response, ground_truth)
+            print(f"\n\t\t{UNDERLINE}Answer {j + 1}{Style.RESET_ALL}: {response}\n")
+            utils.print_dict(exposed_data, "Sensitive data", "\t\t")
+            met.measure(exposed_data, ground_truth)
         met.print_records()
         print(f"\n{Fore.YELLOW}========================================{Style.RESET_ALL}\n")
 
@@ -158,5 +154,5 @@ if __name__ == "__main__":
     with open(config['prompts'], 'r') as f:
         prompts = json.load(f)
     prompt = prompts[0]
-    ev.run(prompt, config)
+    ev.run_prompt(prompt, config)
     

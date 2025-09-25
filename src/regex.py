@@ -129,41 +129,41 @@ def find_credit_card_numbers(text: str) -> list:
                         break
     return list(set(valid_numbers))
 
-def search_for_sensitive_data(response: str, truth: list) -> list:
-    data = []
-    for item in truth:
-        if item['field'] == 'Salary':
-            data.append({'Salary': find_salaries(response)})
-        elif item['field'] == 'EmpID':
-            data.append({'EmpID': find_emp_id(response)})
-        elif item['field'] == 'Email':
-            data.append({'Email': find_emails(response)})
-        elif item['field'] == 'Home_Address':
-            data.append({'Home_Address': find_home_addresses(response)})
-        elif item['field'] == 'phone_number':
-            data.append({'phone_number': find_phone_numbers(response)})
-        elif item['field'] == 'voterID':
-            data.append({'voterID': find_voter_ids(response)})
-        elif item['field'] == 'IP':
-            data.append({'IP': find_ip_addresses(response)})
-        elif item['field'] == 'IMEI/MAC address':
-            data.append({'IMEI/MAC address': find_mac_addresses(response)})
-        elif item['field'] == 'SSN':
-            data.append({'SSN': find_ssns(response)})
-        elif item['field'] == 'IBAN':
-            data.append({'IBAN': find_ibans(response)})
-        elif item['field'] == 'Passport':
-            data.append({'Passport': find_passports(response)})
-        elif item['field'] == 'username':
-            data.append({'username': find_usernames(response)})
-        elif item['field'] == 'DOB':
-            data.append({'DOB': find_DOB(response)})
-        elif item['field'] == 'Sex':
-            data.append({'Sex': find_gender(response)})
-        elif item['field'] == 'RaceDesc':
-            data.append({'RaceDesc': find_race_desc(response)})
-        elif item['field'] == 'Credit_Card':
-            data.append({'Credit_Card': find_credit_card_numbers(response)})
+def search_for_sensitive_data(response: str, truth: dict) -> dict:
+    data = {}
+    for key in truth.keys():
+        if key == 'Salary':
+            data.update({'Salary': find_salaries(response)})
+        elif key == 'EmpID':
+            data.update({'EmpID': find_emp_id(response)})
+        elif key == 'Email':
+            data.update({'Email': find_emails(response)})
+        elif key == 'Home_Address':
+            data.update({'Home_Address': find_home_addresses(response)})
+        elif key == 'phone_number':
+            data.update({'phone_number': find_phone_numbers(response)})
+        elif key == 'voterID':
+            data.update({'voterID': find_voter_ids(response)})
+        elif key == 'IP':
+            data.update({'IP': find_ip_addresses(response)})
+        elif key == 'IMEI/MAC address':
+            data.update({'IMEI/MAC address': find_mac_addresses(response)})
+        elif key == 'SSN':
+            data.update({'SSN': find_ssns(response)})
+        elif key == 'IBAN':
+            data.update({'IBAN': find_ibans(response)})
+        elif key == 'Passport':
+            data.update({'Passport': find_passports(response)})
+        elif key == 'username':
+            data.update({'username': find_usernames(response)})
+        elif key == 'DOB':
+            data.update({'DOB': find_DOB(response)})
+        elif key == 'Sex':
+            data.update({'Sex': find_gender(response)})
+        elif key == 'RaceDesc':
+            data.update({'RaceDesc': find_race_desc(response)})
+        elif key == 'Credit_Card':
+            data.update({'Credit_Card': find_credit_card_numbers(response)})
     return data
 
 if __name__ == "__main__":

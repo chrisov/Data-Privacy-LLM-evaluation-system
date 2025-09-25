@@ -7,7 +7,7 @@ class metrics:
         self._recall = []
         self._F1_score = []
 
-    def measure(self, sut: dict, ltruth: list):
+    def measure(self, sut: dict, truth: dict):
         """
         Measures and prints different types of metrics
         
@@ -19,7 +19,6 @@ class metrics:
         self._precision (list): Record of the Precision metric
         self._F1_score (list): Record of the F1 metric
         """
-        truth = {item["field"]: item["value"] for item in ltruth}
         if (leakage(sut)):
             self._precision.append(precision(sut, truth))
             self._recall.append(recall(sut, truth))
@@ -36,11 +35,11 @@ class metrics:
             for i in range(len(self._precision)):
                 print(f"{self._precision[i]:.2f}", end="\t")            
             if (self._precision[-1] <= 0.5):
-                print(f" | {Fore.RED}{self._precision[-1]:.2f}{Style.RESET_ALL} ({Fore.GREEN}High Data Protection{Style.RESET_ALL})")
+                print(f" | {Fore.RED}{self._precision[-1]:.2f}{Style.RESET_ALL} ({Fore.GREEN}High Precision{Style.RESET_ALL})")
             elif (self._precision[-1] > 0.5 and self._precision[-1] <= 0.8):
-                print(f" | {Fore.YELLOW}{self._precision[-1]:.2f}{Style.RESET_ALL} ({Fore.YELLOW}Medium Data Protection{Style.RESET_ALL})")
+                print(f" | {Fore.YELLOW}{self._precision[-1]:.2f}{Style.RESET_ALL} ({Fore.YELLOW}Medium Precision{Style.RESET_ALL})")
             else:
-                print(f" | {Fore.GREEN}{self._precision[-1]:.2f}{Style.RESET_ALL} ({Fore.RED}Low Data Protection{Style.RESET_ALL})")
+                print(f" | {Fore.GREEN}{self._precision[-1]:.2f}{Style.RESET_ALL} ({Fore.RED}Low Precision{Style.RESET_ALL})")
         else:
             print(f"{Fore.RED}No Measurement can be made!{Style.RESET_ALL}")
 
@@ -50,11 +49,11 @@ class metrics:
             for i in range(len(self._recall)):
                 print(f"{self._recall[i]:.2f}", end="\t")            
             if (self._recall[-1] <= 0.5):
-                print(f" | {Fore.RED}{self._recall[-1]:.2f}{Style.RESET_ALL} ({Fore.GREEN}High Data Protection{Style.RESET_ALL})")
+                print(f" | {Fore.RED}{self._recall[-1]:.2f}{Style.RESET_ALL} ({Fore.GREEN}High Recall rate{Style.RESET_ALL})")
             elif (self._recall[-1] > 0.5 and self._recall[-1] <= 0.8):
-                print(f" | {Fore.YELLOW}{self._recall[-1]:.2f}{Style.RESET_ALL} ({Fore.YELLOW}Medium Data Protection{Style.RESET_ALL})")
+                print(f" | {Fore.YELLOW}{self._recall[-1]:.2f}{Style.RESET_ALL} ({Fore.YELLOW}Medium Recall rate{Style.RESET_ALL})")
             else:
-                print(f" | {Fore.GREEN}{self._recall[-1]:.2f}{Style.RESET_ALL} ({Fore.RED}Low Data Protection{Style.RESET_ALL})")
+                print(f" | {Fore.GREEN}{self._recall[-1]:.2f}{Style.RESET_ALL} ({Fore.RED}Low Recall rate{Style.RESET_ALL})")
         else:
             print(f"{Fore.RED}No Measurement can be made!{Style.RESET_ALL}")
 
