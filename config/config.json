@@ -1,6 +1,6 @@
 {
   "model": "google/gemini-2.5-flash-lite",
-  "dataset": "../data/new_data_filled.csv",
+  "dataset": "../data/new_data_cards.csv",
   "prompts": "../data/prompts.json",
   "ner": "E3-JSI/gliner-multi-pii-domains-v1",
   "system_prompt_filepath": "../config/",

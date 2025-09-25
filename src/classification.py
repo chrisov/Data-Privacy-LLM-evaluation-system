@@ -55,9 +55,9 @@ class Simulation:
     Different tenants can simulate the different sessions.
     """
 
-    def __init__(self):
+    def __init__(self, user: str):
        self.init_tenants()
-       self.init_users()
+       self.init_user_profile(user)
        pass
  
     def init_tenants(self):
@@ -77,64 +77,68 @@ class Simulation:
                 'encryption_level': 'AES-256'
             }
         ]
-    
-    def init_users(self):
+
+    def init_user_profile(self, choice: str):
         """
         Init the different types of users accessing the system,
         with different levels of hierarchy
         """
 
-        self._users = [
-            {
+        if (choice == Role.CUSTOMER.value):
+            self._user = {
                 'tenant': '42 + 1 GmbH',
                 'role': Role.CUSTOMER,
                 'clearance': ClearanceLevel.PUBLIC,
                 'department': None,
-            },
-            {
+            }
+        elif (choice == Role.EXT_CONTRACTOR.value):
+            self._user = {
                 'tenant': '42 + 1 GmbH',
                 'role': Role.EXT_CONTRACTOR,
                 'clearance': ClearanceLevel.INTERNAL,
                 'department': 'it_support',
-            },
-            {
+            }
+        elif (choice == Role.AGENT.value):
+            self._user = {
                 'tenant': '42 + 1 GmbH',
                 'role': Role.AGENT,
                 'clearance': ClearanceLevel.INTERNAL,
                 'department': 'customer_support',
-            },
-            {
+            }
+        elif (choice == Role.ANALYST.value):
+            self._user = {
                 'tenant': '42 + 1 GmbH',
                 'role': Role.ANALYST,
                 'clearance': ClearanceLevel.CONFIDENTIAL,
                 'department': 'risk_management',
-            },
-            {
+            }
+        else:
+            self._user = {
                 'tenant': '42 + 1 GmbH', 
                 'role': Role.ADMIN,
                 'clearance': ClearanceLevel.PRIVATE,
                 'department': 'customer_support',
             }
-        ]
 
     def run(self, prompt: dict, config) -> str:
-        for i, tenant in enumerate(self._tenants, 1):
-            query = prompt['query']
-            met = m.metrics()
-            print(f"{UNDERLINE}\nTenant {i}{Style.RESET_ALL}: '{tenant['name']}'\n")
-            print(f"\t{UNDERLINE}Question{Style.RESET_ALL}: {query}")
-            for j, user in enumerate(self._users, 1):
-                restriction = utils.check_clearance(user['clearance'].value, prompt['ground_truth'])
-                print(f"\n\t\t{UNDERLINE}User {j}{Style.RESET_ALL} ({user['role'].value}):")
-                for j in range(config['iterations']):
-                    respond = ai.loader(query, restriction, config)
-                    exposed_data = ner.loader(prompt['ground_truth'], respond, config)
-                    print(f"\n\t\t\t{UNDERLINE}Answer {j + 1}{Style.RESET_ALL}: {respond}\n")
-                    utils.print_dicts(exposed_data, None)
-                    met.measure(exposed_data, prompt['ground_truth'])
-                utils.print_dicts(None, prompt['ground_truth'])
-                met.print_records()
-                print(f"\n{Fore.YELLOW}========================================{Style.RESET_ALL}\n")
+        # for i, tenant in enumerate(self._tenants, 1):
+        query = prompt['query']
+        met = m.metrics()
+        print(f"\t{UNDERLINE}Question{Style.RESET_ALL}: {query}")
+        if (prompt['ground_truth']):
+            print(f"\n\t{UNDERLINE}Ground truth{Style.RESET_ALL}:")
+            for item in prompt['ground_truth']:
+                print(f"\t{item['field']} (req. clear: {item['clearance']}): {item['value']}")
+        restriction = utils.check_clearance(self._user['clearance'].value, prompt['ground_truth'])
+        print(f"\n\t\t{UNDERLINE}{self._user['role'].value}{Style.RESET_ALL}:")
+        for j in range(config['iterations']):
+            respond = ai.loader(query, restriction, config)
+            exposed_data = ner.loader(prompt['ground_truth'], respond, config)
+            print(f"\n\t\t\t{UNDERLINE}Answer {j + 1}{Style.RESET_ALL}: {respond}\n")
+            utils.print_dicts(exposed_data, None)
+            met.measure(exposed_data, prompt['ground_truth'])
+        met.print_records()
+        print(f"\n{Fore.YELLOW}========================================{Style.RESET_ALL}\n")
 
 
 
@@ -146,7 +150,11 @@ if __name__ == "__main__":
     disable_progress_bars()
     hf_logging.set_verbosity_error()
     config = load_config()
-    ev = Simulation()
+    # user = "Customer"
+    # user = "Agent"
+    user = "Admin"
+    # user = "Analyst"
+    ev = Simulation(user)
     with open(config['prompts'], 'r') as f:
         prompts = json.load(f)
     prompt = prompts[0]

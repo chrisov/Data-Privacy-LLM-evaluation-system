@@ -17,36 +17,36 @@ def load_config(path="/Users/j.chrisov/Documents/LEVEL3-projects/llm-evaluation/
 
 
 
-def load_json(filepath: str, field: str) -> list:
-    """
-    Parses the json file and returns the specified value.
+# def load_json(filepath: str, field: str) -> list:
+#     """
+#     Parses the json file and returns the specified value.
     
-    Args:
-        filepath (str): Path to the json's path.
-        field (str): The requested field from which we will extract is value 
+#     Args:
+#         filepath (str): Path to the json's path.
+#         field (str): The requested field from which we will extract is value 
         
-    Returns:
-        list: The specified field's values.
-    """
-    prompts = []
-    try:
-        with open(filepath, 'r') as file:
-            list = json.load(file)
-    except FileNotFoundError:
-        list = []
-        print(f"Error: The file '{filepath}' was not found.")
-    except json.JSONDecodeError:
-        list = []
-        print(f"Error: The file '{filepath}' contains invalid JSON.")
-    if list:
-        for item in list:
-            if field in item:
-                prompts.append(item[field])
-            else:
-                print(f"Warning: '{field}' key not found in an item.")
-    else:
-        print("The JSON data is empty or invalid.")
-    return prompts
+#     Returns:
+#         list: The specified field's values.
+#     """
+#     prompts = []
+#     try:
+#         with open(filepath, 'r') as file:
+#             list = json.load(file)
+#     except FileNotFoundError:
+#         list = []
+#         print(f"Error: The file '{filepath}' was not found.")
+#     except json.JSONDecodeError:
+#         list = []
+#         print(f"Error: The file '{filepath}' contains invalid JSON.")
+#     if list:
+#         for item in list:
+#             if field in item:
+#                 prompts.append(item[field])
+#             else:
+#                 print(f"Warning: '{field}' key not found in an item.")
+#     else:
+#         print("The JSON data is empty or invalid.")
+#     return prompts
 
 
 def check_clearance(u_lvl: int, truth: list) -> str:

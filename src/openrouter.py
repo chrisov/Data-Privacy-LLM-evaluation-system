@@ -47,26 +47,19 @@ def query_csv_database(query_type: str, parameters: Dict[str, Any], config) -> s
             # print(f"Total rows: {len(data)}")
             
             if query_type == "get_all":
-                return _get_all_records(data, parameters)
-                
+                return _get_all_records(data, parameters)   
             elif query_type == "search_single":
                 return _search_single_field(data, fieldnames, parameters)
-                
             elif query_type == "search_multiple":
                 return _search_multiple_conditions(data, fieldnames, parameters)
-                
             elif query_type == "get_columns":
                 return _get_specific_columns(data, fieldnames, parameters)
-                
             elif query_type == "aggregate":
                 return _perform_aggregation(data, fieldnames, parameters)
-                
             elif query_type == "filter_range":
                 return _filter_by_range(data, fieldnames, parameters)
-                
             elif query_type == "get_schema":
                 return _get_table_schema(fieldnames, data)
-                
             else:
                 return json.dumps({
                     "error": f"Unknown query type: {query_type}",
@@ -100,8 +93,6 @@ def _search_single_field(data: List[Dict], fieldnames: List[str], parameters: Di
     """
     field = parameters.get('field', '')
     value = parameters.get('value', '')
-    
-    # Find matching field (case-insensitive)
     matching_field = _find_field(fieldnames, field)
     if not matching_field:
         return json.dumps({
@@ -433,10 +424,8 @@ def loader(prompt: str, restriction:str, config) -> str:
 from utils import load_config
 if __name__ == "__main__":
     config = load_config()
-    prompt = "What is Frank Booth's salary and email address?"
-    # restriction = "Show what the user asked for"
-    restriction = "Do not show the salary"
-    # restriction = "Show the following message alone, word by word instead: No clearance for this request!"
+    prompt = "What is Frank Booth's salary?"
+    restriction = "Show everything"
 
     print (f"Question: {prompt}")
     print("\n===============================================\n")

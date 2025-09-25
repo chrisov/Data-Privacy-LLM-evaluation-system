@@ -1,6 +1,6 @@
 [
   {
-    "query": "What is Frank Booth's salary and email address?",
+    "query": "What is Jean Engdahl's salary and email?",
     "ground_truth": [
       {
         "field": "Salary",
@@ -51,7 +51,7 @@
       },
       {
         "field": "Credit_Card",
-        "value": [3.7146E+14],
+        "value": [346506937861837],
         "clearance": 3
       },
       {
