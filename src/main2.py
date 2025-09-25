@@ -7,7 +7,6 @@ from InquirerPy import inquirer
 import sys
 from colorama import init, Fore, Style
 
-
 UNDERLINE = "\x1b[4m"
 
 disable_progress_bars()
@@ -28,19 +27,17 @@ def menu() -> str:
         """,
         choices=["Customer", "Agent", "External Contractor", "Analyst", "Admin", "Exit"],
     ).execute()
-    if choice != "Exit":
-        print("You entered as :", choice)
+    if choice == "Exit":
+        sys.exit(0)
+    print("You entered as :", choice)
     return choice
-
 
 if __name__ == "__main__":
     user = menu()
-    if (user == "Exit"):
-        sys.exit(0)
     config = load_config()
     with open(config['prompts'], 'r') as f:
         prompts = json.load(f)
-    for i, prompt in enumerate(prompts, 1):
+    for prompt in prompts:
         eval = ev.Simulation(user)
         for i, tenant in enumerate(eval._tenants, 1):
             print(f"{UNDERLINE}\nTenant {i}{Style.RESET_ALL}: '{tenant['name']}'\n")

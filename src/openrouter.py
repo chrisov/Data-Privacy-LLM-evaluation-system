@@ -71,7 +71,6 @@ def query_csv_database(query_type: str, parameters: Dict[str, Any], config) -> s
     except Exception as e:
         return json.dumps({"error": f"Error processing query: {str(e)}"})
 
-
 def _get_all_records(data: List[Dict], parameters: Dict) -> str:
     """
     Return all records, optionally with limits

@@ -4,6 +4,7 @@ import openrouter as ai
 import utils
 import metrics as m
 import regex as rgx
+import matrix as mtx
 
 UNDERLINE = "\x1b[4m"
 
@@ -123,17 +124,22 @@ class Simulation:
         query = prompt['query']
         ground_truth = utils.create_ground_truth(prompt['ground_truth'])
         met = m.metrics()
+        restriction = utils.check_clearance(self._user['clearance'].value, prompt['ground_truth'])
+        
         print(f"\t{UNDERLINE}Question{Style.RESET_ALL}: {query}\n")
         utils.print_dict(ground_truth, "Ground truth", "\t")
-        restriction = utils.check_clearance(self._user['clearance'].value, prompt['ground_truth'])
         print(f"\n\t\t{UNDERLINE}{self._user['role'].value}{Style.RESET_ALL}:")
+        
         for j in range(config['iterations']):
             response = ai.loader(query, restriction, config)
             exposed_data = rgx.search_for_sensitive_data(response, ground_truth)
-            print(f"\n\t\t{UNDERLINE}Answer {j + 1}{Style.RESET_ALL}: {response}\n")
             utils.print_dict(exposed_data, "Sensitive data", "\t\t")
             met.measure(exposed_data, ground_truth)
+
+            print(f"\n\t\t{UNDERLINE}Answer {j + 1}{Style.RESET_ALL}: {response}\n")
+        
         met.print_records()
+        mtx.confusion_matrix(exposed_data, ground_truth)
         print(f"\n{Fore.YELLOW}========================================{Style.RESET_ALL}\n")
 
 
