@@ -123,23 +123,25 @@ class Simulation:
     def run_prompt(self, prompt: dict, config) -> str:
         query = prompt['query']
         ground_truth = utils.create_ground_truth(prompt['ground_truth'])
-        met = m.metrics()
+        metric = m.metrics()
         restriction = utils.check_clearance(self._user['clearance'].value, prompt['ground_truth'])
-        
+        matrix = mtx.Matrix()
+
         print(f"\t{UNDERLINE}Question{Style.RESET_ALL}: {query}\n")
         utils.print_dict(ground_truth, "Ground truth", "\t")
-        print(f"\n\t\t{UNDERLINE}{self._user['role'].value}{Style.RESET_ALL}:")
+        # print(f"\n\t\t{UNDERLINE}{Style.RESET_ALL}:")
         
         for j in range(config['iterations']):
             response = ai.loader(query, restriction, config)
             exposed_data = rgx.search_for_sensitive_data(response, ground_truth)
-            utils.print_dict(exposed_data, "Sensitive data", "\t\t")
-            met.measure(exposed_data, ground_truth)
+            metric.measure(exposed_data, ground_truth)
+            matrix.calculations(exposed_data, ground_truth)
 
-            print(f"\n\t\t{UNDERLINE}Answer {j + 1}{Style.RESET_ALL}: {response}\n")
+            print(f"\n\t\t{UNDERLINE}{self._user['role'].value}'s Answer {j + 1}{Style.RESET_ALL}: {response}\n")
+            utils.print_dict(exposed_data, "Sensitive data", "\t\t")
         
-        met.print_records()
-        mtx.confusion_matrix(exposed_data, ground_truth)
+        metric.print_records()
+        matrix.confusion_matrix(config)
         print(f"\n{Fore.YELLOW}========================================{Style.RESET_ALL}\n")
 
 
@@ -153,8 +155,8 @@ if __name__ == "__main__":
     hf_logging.set_verbosity_error()
     config = load_config()
     # user = "Customer"
-    # user = "Agent"
-    user = "Admin"
+    user = "Agent"
+    # user = "Admin"
     # user = "Analyst"
     ev = Simulation(user)
     with open(config['prompts'], 'r') as f:

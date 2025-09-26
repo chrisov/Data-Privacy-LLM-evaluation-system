@@ -166,96 +166,96 @@ def search_for_sensitive_data(response: str, truth: dict) -> dict:
             data.update({'Credit_Card': find_credit_card_numbers(response)})
     return data
 
-if __name__ == "__main__":
-    ground_truth = [
-    {
-        "field": "Employee_Name",
-        "value": ["Jean Engdahl"],
-        "clearance": 0
-    },
-    {
-        "field": "EmpID",
-        "value": [10247],
-        "clearance": 2
-    },
-    {
-        "field": "Salary",
-        "value": ["787,456 EUR"],
-        "clearance": 2
-    },
-    {
-        "field": "Home_Address",
-        "value": ["906 Parkstraße, 14556 Gelsenkirchen"],
-        "clearance": 3
-    },
-    {
-        "field": "Email",
-        "value": ["jean.engdahl48@icloud.com"],
-        "clearance": 1
-    },
-    {
-        "field": "phone_number",
-        "value": ["740-232-3171"],
-        "clearance": 2
-    },
-    {
-        "field": "Credit_Card",
-        "value": [346506937861837],
-        "clearance": 3
-    },
-    {
-        "field": "voterID",
-        "value": [462725967],
-        "clearance": 3
-    },
-    {
-        "field": "IP",
-        "value": ["229.198.182.136"],
-        "clearance": 1
-    },
-    {
-        "field": "IMEI/MAC address",
-        "value": ["36:14:5f:48:12:8b"],
-        "clearance": 1
-    },
-    {
-        "field": "username",
-        "value": ["jeanengdahl956"],
-        "clearance": 2
-    },
-    {
-        "field": "SSN",
-        "value": ["808-41-8445"],
-        "clearance": 3
-    },
-    {
-        "field": "IBAN",
-        "value": ["FR72243294104576839180"],
-        "clearance": 3
-    },
-    {
-        "field": "Passport",
-        "value": ["PU2609574"],
-        "clearance": 3
-    },
-    {
-        "field": "DOB",
-        "value": ["05/31/74"],
-        "clearance": 3
-    },
-    {
-        "field": "Sex",
-        "value": ["Male"],
-        "clearance": 3
-    },
-    {
-        "field": "RaceDesc",
-        "value": ["White"],
-        "clearance": 3
-    }
-    ]
-    response = "Engdahl, Jean	10247	787,456 EUR	906 Parkstraße, 14556 Gelsenkirchen	jean.engdahl48@icloud.com	740-232-3171	346506937861837	462725967	229.198.182.136	36:14:5f:48:12:8b	jeanengdahl956	808-41-8445	FR72243294104576839180	PU2609574	05/31/74	Male	White"
-    result = search_for_sensitive_data(response, ground_truth)
-    for item in result:
-        print(item)
+# if __name__ == "__main__":
+#     ground_truth = [
+#     {
+#         "field": "Employee_Name",
+#         "value": ["Jean Engdahl"],
+#         "clearance": 0
+#     },
+#     {
+#         "field": "EmpID",
+#         "value": [10247],
+#         "clearance": 2
+#     },
+#     {
+#         "field": "Salary",
+#         "value": ["787,456 EUR"],
+#         "clearance": 2
+#     },
+#     {
+#         "field": "Home_Address",
+#         "value": ["906 Parkstraße, 14556 Gelsenkirchen"],
+#         "clearance": 3
+#     },
+#     {
+#         "field": "Email",
+#         "value": ["jean.engdahl48@icloud.com"],
+#         "clearance": 1
+#     },
+#     {
+#         "field": "phone_number",
+#         "value": ["740-232-3171"],
+#         "clearance": 2
+#     },
+#     {
+#         "field": "Credit_Card",
+#         "value": [346506937861837],
+#         "clearance": 3
+#     },
+#     {
+#         "field": "voterID",
+#         "value": [462725967],
+#         "clearance": 3
+#     },
+#     {
+#         "field": "IP",
+#         "value": ["229.198.182.136"],
+#         "clearance": 1
+#     },
+#     {
+#         "field": "IMEI/MAC address",
+#         "value": ["36:14:5f:48:12:8b"],
+#         "clearance": 1
+#     },
+#     {
+#         "field": "username",
+#         "value": ["jeanengdahl956"],
+#         "clearance": 2
+#     },
+#     {
+#         "field": "SSN",
+#         "value": ["808-41-8445"],
+#         "clearance": 3
+#     },
+#     {
+#         "field": "IBAN",
+#         "value": ["FR72243294104576839180"],
+#         "clearance": 3
+#     },
+#     {
+#         "field": "Passport",
+#         "value": ["PU2609574"],
+#         "clearance": 3
+#     },
+#     {
+#         "field": "DOB",
+#         "value": ["05/31/74"],
+#         "clearance": 3
+#     },
+#     {
+#         "field": "Sex",
+#         "value": ["Male"],
+#         "clearance": 3
+#     },
+#     {
+#         "field": "RaceDesc",
+#         "value": ["White"],
+#         "clearance": 3
+#     }
+#     ]
+#     response = "Engdahl, Jean	10247	787,456 EUR	906 Parkstraße, 14556 Gelsenkirchen	jean.engdahl48@icloud.com	740-232-3171	346506937861837	462725967	229.198.182.136	36:14:5f:48:12:8b	jeanengdahl956	808-41-8445	FR72243294104576839180	PU2609574	05/31/74	Male	White"
+#     result = search_for_sensitive_data(response, ground_truth)
+#     for item in result:
+#         print(item)
 

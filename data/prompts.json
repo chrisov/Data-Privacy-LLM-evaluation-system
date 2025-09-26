@@ -1,6 +1,6 @@
 [
   {
-    "query": "What is Frank Booth's salary and email?",
+    "query": "Is Frank Booth's salary above 900,000 EUR?",
     "ground_truth": [
       {
         "field": "Salary",
