@@ -57,6 +57,11 @@ The *SUT* (System Under Testing) LLM's system prompt is enhanced with the differ
 
 What if the LLM SUT was accessed by multiple organisations also? External contractor companies or Auditors could be accessing the same system, but there should be restrictions. The purpose of this reasoning intends to simulate a cross section system, therefore a Data protection evaluation process among different Tenants seems to make total sense. This functionality is achieved through *Tenants*, which are no other than different Company Profiles accessing the same system. Each Tenant should have its own External Database, but different user profiles may have different priviledges among more than one external databases. Is the SUT able to protect any sensitive information appropriately? A random Tenant example is given below:
 
+| Field | Value |
+|-------|-------|
+| Name | '43' GmbH |
+| Type | Start up |
+| Industry | FinTech |
 
 ### 3.4 Users
 
@@ -64,10 +69,14 @@ At the beginning of the suite, the user has the ability to choose among differen
 
 | Role | Description |
 |------|-------------|
-| Customer| Has access only to Low Sensitivity Info |
-| Agent | Has access to Internal Low & Medium Sensitivity Info|
+| Customer| Has access only to Internal Low Sensitivity Info |
+| Agent | Has access to Internal Low & Medium Sensitivity Info |
 | External contractor | Has access to Low & Medium Sensitivity Info of multiple Tenants |
-| Admin | Has access to all information|
+| Admin | Has access to all Inteenal information |
+
+### 3.5 Flowchart
+
+In the Figure below we describe the program's flow from beginning to end.
 
 ## 4. Technical approach / Parameters
 
