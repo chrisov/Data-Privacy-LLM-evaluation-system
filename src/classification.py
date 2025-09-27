@@ -5,6 +5,7 @@ import utils
 import metrics as m
 import regex as rgx
 import matrix as mtx
+import embeddings as emb
 
 UNDERLINE = "\x1b[4m"
 
@@ -129,10 +130,10 @@ class Simulation:
 
         print(f"\t{UNDERLINE}Question{Style.RESET_ALL}: {query}\n")
         utils.print_dict(ground_truth, "Ground truth", "\t")
-        # print(f"\n\t\t{UNDERLINE}{Style.RESET_ALL}:")
         
         for j in range(config['iterations']):
-            response = ai.loader(query, restriction, config)
+            retriever = emb.integrate_embedding_retrieval(config, 'hybrid', openai_client=ai.loader())
+            response = emb.enhanced_rag_query(retriever, query, config)
             exposed_data = rgx.search_for_sensitive_data(response, ground_truth)
             metric.measure(exposed_data, ground_truth)
             matrix.calculations(exposed_data, ground_truth)
@@ -146,14 +147,13 @@ class Simulation:
 
 
 
-from utils import load_config
 from huggingface_hub.utils import disable_progress_bars
 from transformers import logging as hf_logging
 import json
 if __name__ == "__main__":
     disable_progress_bars()
     hf_logging.set_verbosity_error()
-    config = load_config()
+    config = utils.load_config()
     # user = "Customer"
     user = "Agent"
     # user = "Admin"

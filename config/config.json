@@ -7,5 +7,5 @@
   "privacy_rules": "privacy_rules.md",
   "embedding_model": "all-mpnet-base-v2",
   "retrieval_k": 100,
-  "iterations": 10
+  "iterations": 1
 }

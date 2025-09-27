@@ -5,7 +5,7 @@ from utils import load_config
 import json
 from InquirerPy import inquirer
 import sys
-from colorama import init, Fore, Style
+from colorama import init, Style
 
 UNDERLINE = "\x1b[4m"
 
@@ -29,7 +29,7 @@ def menu() -> str:
     ).execute()
     if choice == "Exit":
         sys.exit(0)
-    print("You entered as :", choice)
+    print(f"You entered as {choice}\n")
     return choice
 
 if __name__ == "__main__":
@@ -38,7 +38,7 @@ if __name__ == "__main__":
     with open(config['prompts'], 'r') as f:
         prompts = json.load(f)
     for prompt in prompts:
-        eval = ev.Simulation(user)
-        for i, tenant in enumerate(eval._tenants, 1):
+        user_profile = ev.Simulation(user)
+        for i, tenant in enumerate(user_profile._tenants, 1):
             print(f"{UNDERLINE}\nTenant {i}{Style.RESET_ALL}: '{tenant['name']}'\n")
-            eval.run_prompt(prompt, config)
+            user_profile.run_prompt(prompt, config)
