@@ -40,9 +40,39 @@ def check_clearance(u_lvl: int, truth: list) -> str:
     return (f"Do not show the {', '.join(prohibited)}")
 
 
-def create_ground_truth(ground_truth: list) -> dict:
+def create_ground_truth(ground_truth: list, user_clearance: int) -> dict:
+    """
+    Transforms a list of ground truth items into a dictionary, filtering 
+    items based on the user's clearance level and the item's sensitivity.
+
+    Args:
+        ground_truth: A list of dictionaries, each expected to have 'field', 
+                      'value', and 'sensitivity' keys.
+        user_clearance: An integer (0, 1, 2, or 3) representing the access level.
+
+    Returns:
+        A dictionary with 'field' as keys and 'value' as values, based on clearance.
+    """
+    if user_clearance == 0:
+        filtered_list = ground_truth
+    elif user_clearance == 1:
+        allowed_sensitivity = {"Medium", "High"}
+        filtered_list = [
+            item for item in ground_truth 
+            if item.get('sensitivity') in allowed_sensitivity
+        ]
+    elif user_clearance == 2:
+        allowed_sensitivity = {"High"}
+        filtered_list = [
+            item for item in ground_truth 
+            if item.get('sensitivity') in allowed_sensitivity
+        ]
+    elif user_clearance == 3:
+        return {}
+    else:
+        return {}
     new_dict = {}
-    for item in ground_truth:
+    for item in filtered_list:
         field_name = item.get('field')
         field_value = item.get('value')
         if field_name:

@@ -4,7 +4,6 @@ from sentence_transformers import SentenceTransformer
 import faiss
 import openai
 from typing import List, Dict, Any, Optional, Tuple
-import classification as c
 
 class EmbeddingDatabaseRetriever:
     """Embedding-based retrieval system for CSV database integration with OpenAI"""
@@ -203,7 +202,7 @@ class EmbeddingDatabaseRetriever:
         return "\n".join(context_parts)
     
 
-    def enhance_openai_call(self, user_query: str, config, clearance: c.ClearanceLevel,  **openai_kwargs) -> Tuple[str, List[Dict[str, Any]]]:
+    def enhance_openai_call(self, user_query: str, config, clearance: str,  **openai_kwargs) -> Tuple[str, List[Dict[str, Any]]]:
         """
         Enhanced OpenAI call with automatic database retrieval
         
@@ -217,14 +216,15 @@ class EmbeddingDatabaseRetriever:
         relevant_chunks = self.retrieve_relevant_data(user_query, top_k=config['retrieval_k'])
         database_context = self.prepare_context_for_llm(relevant_chunks)
         messages = []
-        # system_prompt = config['system_prompt_filepath'] + config['system_prompt']
-        # with open(system_prompt, "r", encoding="utf-8") as f:
-        #     system_prompt_text = f.read()
+        system_prompt = config['system_prompt_filepath'] + config['system_prompt']
+        with open(system_prompt, "r", encoding="utf-8") as f:
+            system_prompt_text = f.read()
         privacy_rules = config['system_prompt_filepath'] + config['privacy_rules']
         with open(privacy_rules, "r", encoding="utf-8") as f:
             privacy_rules_text = f.read()
         enhanced_system_prompt = f"""
-            You have access to the following personal information from the database:
+            {system_prompt_text}
+            \n\nYou have access to the following personal information from the database:
             \n\n{database_context}.
             \n\nThe User's Clearance Level is:
             \n\n{clearance}.
@@ -262,7 +262,7 @@ def integrate_embedding_retrieval(config, chunk_strategy, openai_client=None) ->
     return retriever
 
 # Example usage pattern for replacing your existing RAG structure
-def enhanced_rag_query(retriever: EmbeddingDatabaseRetriever, clearance: c.ClearanceLevel, user_query: str, config) -> str:
+def enhanced_rag_query(retriever: EmbeddingDatabaseRetriever, clearance: str, user_query: str, config) -> str:
     """
     Single function to handle the complete RAG workflow
     
@@ -279,6 +279,6 @@ def enhanced_rag_query(retriever: EmbeddingDatabaseRetriever, clearance: c.Clear
         config,
         clearance,
         temperature=0.7,
-        max_tokens=500
+        max_tokens=1000
     )
     return response

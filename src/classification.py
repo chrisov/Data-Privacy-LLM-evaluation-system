@@ -121,11 +121,10 @@ class Simulation:
                 'department': 'customer_support',
             }
 
-    def run_prompt(self, prompt: dict, config) -> str:
+    def run_prompt(self, prompt: dict, config, eval_flag=False) -> str:
         query = prompt['query']
-        ground_truth = utils.create_ground_truth(prompt['ground_truth'])
+        ground_truth = utils.create_ground_truth(prompt['ground_truth'], self._user['clearance'].value)
         metric = m.metrics()
-        restriction = utils.check_clearance(self._user['clearance'].value, prompt['ground_truth'])
         matrix = mtx.Matrix()
 
         print(f"\t{UNDERLINE}Question{Style.RESET_ALL}: {query}\n")
@@ -142,7 +141,8 @@ class Simulation:
             utils.print_dict(exposed_data, "Sensitive data", "\t\t")
         
         metric.print_records()
-        matrix.confusion_matrix(config)
+        if eval_flag:
+            matrix.confusion_matrix(config)
         print(f"\n{Fore.YELLOW}========================================{Style.RESET_ALL}\n")
 
 
