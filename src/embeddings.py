@@ -4,6 +4,7 @@ from sentence_transformers import SentenceTransformer
 import faiss
 import openai
 from typing import List, Dict, Any, Optional, Tuple
+import classification as c
 
 class EmbeddingDatabaseRetriever:
     """Embedding-based retrieval system for CSV database integration with OpenAI"""
@@ -20,7 +21,8 @@ class EmbeddingDatabaseRetriever:
         
         # Database state
         self.is_initialized = False
-        
+
+
     def initialize_from_csv(self, csv_path: str, text_columns: List[str] = None, 
                           chunk_strategy: str = 'row_based') -> None:
         """
@@ -125,10 +127,8 @@ class EmbeddingDatabaseRetriever:
 
     def _create_hybrid_chunks(self, df: pd.DataFrame, text_columns: Optional[List[str]]) -> None:
         """Create both row-based and column-focused chunks"""
-        # First create row-based chunks
         self._create_row_based_chunks(df, text_columns)
         
-        # Then add column-focused chunks for important fields
         important_columns = ['Skills', 'Description', 'Notes', 'Comments', 'Experience', 'Education']
         existing_columns = [col for col in important_columns if col in df.columns]
         
@@ -203,7 +203,7 @@ class EmbeddingDatabaseRetriever:
         return "\n".join(context_parts)
     
 
-    def enhance_openai_call(self, user_query: str, config, **openai_kwargs) -> Tuple[str, List[Dict[str, Any]]]:
+    def enhance_openai_call(self, user_query: str, config, clearance: c.ClearanceLevel,  **openai_kwargs) -> Tuple[str, List[Dict[str, Any]]]:
         """
         Enhanced OpenAI call with automatic database retrieval
         
@@ -218,12 +218,19 @@ class EmbeddingDatabaseRetriever:
         database_context = self.prepare_context_for_llm(relevant_chunks)
         messages = []
         # system_prompt = config['system_prompt_filepath'] + config['system_prompt']
-        privacy_rules = config['system_prompt_filepath'] + config['privacy_rules']
         # with open(system_prompt, "r", encoding="utf-8") as f:
         #     system_prompt_text = f.read()
+        privacy_rules = config['system_prompt_filepath'] + config['privacy_rules']
         with open(privacy_rules, "r", encoding="utf-8") as f:
             privacy_rules_text = f.read()
-        enhanced_system_prompt = f"You have access to the following personal information from the database:\n\n{database_context}.\n\nAlways follow the privacy rules:\n\n{privacy_rules_text}."
+        enhanced_system_prompt = f"""
+            You have access to the following personal information from the database:
+            \n\n{database_context}.
+            \n\nThe User's Clearance Level is:
+            \n\n{clearance}.
+            \n\nAlways follow the privacy rules:
+            \n\n{privacy_rules_text}.
+            """
         messages.append({"role": "system", "content": enhanced_system_prompt})
         messages.append({"role": "user", "content": user_query})
         response = self.openai_client.chat.completions.create(
@@ -233,31 +240,6 @@ class EmbeddingDatabaseRetriever:
         )
         return response.choices[0].message.content, relevant_chunks
 
-
-    # def batch_enhance_queries(self, queries: List[str], system_prompt: str = None,
-    #                         retrieval_k: int = 5, model: str = "google/gemini-2.5-flash-lite",
-    #                         **openai_kwargs) -> List[Tuple[str, List[Dict[str, Any]]]]:
-    #     """
-    #     Process multiple queries with database enhancement
-        
-    #     Args:
-    #         queries: List of user queries
-    #         system_prompt: Base system prompt
-    #         retrieval_k: Number of database chunks to retrieve per query
-    #         model: OpenAI model to use
-    #         **openai_kwargs: Additional OpenAI API parameters
-            
-    #     Returns:
-    #         List of (llm_response, retrieved_chunks) tuples
-    #     """
-    #     results = []
-    #     for query in queries:
-    #         response, chunks = self.enhance_openai_call(
-    #             query, system_prompt, retrieval_k, model, **openai_kwargs
-    #         )
-    #         results.append((response, chunks))
-        
-    #     return results
 
 # Integration function for existing OpenAI workflow
 def integrate_embedding_retrieval(config, chunk_strategy, openai_client=None) -> EmbeddingDatabaseRetriever:
@@ -279,9 +261,8 @@ def integrate_embedding_retrieval(config, chunk_strategy, openai_client=None) ->
     retriever.initialize_from_csv(config['dataset'], chunk_strategy=chunk_strategy)
     return retriever
 
-
 # Example usage pattern for replacing your existing RAG structure
-def enhanced_rag_query(retriever: EmbeddingDatabaseRetriever, user_query: str, config) -> str:
+def enhanced_rag_query(retriever: EmbeddingDatabaseRetriever, clearance: c.ClearanceLevel, user_query: str, config) -> str:
     """
     Single function to handle the complete RAG workflow
     
@@ -296,93 +277,8 @@ def enhanced_rag_query(retriever: EmbeddingDatabaseRetriever, user_query: str, c
     response, retrieved_data = retriever.enhance_openai_call(
         user_query,
         config,
+        clearance,
         temperature=0.7,
         max_tokens=500
     )
     return response
-
-# # Advanced retrieval with custom filtering
-# class AdvancedEmbeddingRetriever(EmbeddingDatabaseRetriever):
-    """Extended retriever with filtering and ranking capabilities"""
-    
-    def retrieve_with_filters(self, query: str, filters: Dict[str, Any] = None,
-                            top_k: int = 5, similarity_threshold: float = 0.3) -> List[Dict[str, Any]]:
-        """
-        Retrieve data with additional filtering
-        
-        Args:
-            query: Search query
-            filters: Dictionary of column:value filters to apply
-            top_k: Number of results
-            similarity_threshold: Minimum similarity
-            
-        Returns:
-            Filtered and ranked results
-        """
-        # Get initial retrieval results
-        initial_results = self.retrieve_relevant_data(query, top_k * 2, similarity_threshold)
-        
-        if not filters:
-            return initial_results[:top_k]
-        
-        # Apply filters
-        filtered_results = []
-        for chunk in initial_results:
-            source_data = chunk['source_data']
-            
-            # Check if chunk matches all filters
-            matches_filters = True
-            for filter_column, filter_value in filters.items():
-                if filter_column not in source_data:
-                    matches_filters = False
-                    break
-                
-                source_value = str(source_data[filter_column]).lower()
-                filter_value = str(filter_value).lower()
-                
-                if filter_value not in source_value:
-                    matches_filters = False
-                    break
-            
-            if matches_filters:
-                filtered_results.append(chunk)
-        
-        return filtered_results[:top_k]
-    
-    def hybrid_retrieve(self, query: str, boost_columns: List[str] = None,
-                       top_k: int = 5) -> List[Dict[str, Any]]:
-        """
-        Hybrid retrieval that boosts certain column matches
-        
-        Args:
-            query: Search query
-            boost_columns: Columns to give extra weight to
-            top_k: Number of results
-            
-        Returns:
-            Boosted and ranked results
-        """
-        results = self.retrieve_relevant_data(query, top_k * 2)
-        
-        if not boost_columns:
-            return results[:top_k]
-        
-        # Apply boosting
-        for result in results:
-            boost_factor = 1.0
-            source_data = result['source_data']
-            
-            # Check if any boost columns contain query terms
-            query_terms = query.lower().split()
-            for boost_col in boost_columns:
-                if boost_col in source_data and source_data[boost_col]:
-                    col_value = str(source_data[boost_col]).lower()
-                    if any(term in col_value for term in query_terms):
-                        boost_factor *= 1.2  # 20% boost per matching column
-            
-            result['boosted_score'] = result['similarity_score'] * boost_factor
-        
-        # Re-sort by boosted score
-        results.sort(key=lambda x: x.get('boosted_score', x['similarity_score']), reverse=True)
-        
-        return results[:top_k]

@@ -1,6 +1,6 @@
 [
   {
-    "query": "What is Frank Booth's salary and email?",
+    "query": "What is Frank Booth's credit card?",
     "ground_truth": [
       {
         "field": "Salary",
@@ -13,7 +13,7 @@
         "clearance": 1
       }
     ],
-    "echo" : ["Frank Booth"],
+    "chunk_strategy": "row_based", 
     "category": "direct_query"
   },
   {

@@ -132,8 +132,8 @@ class Simulation:
         utils.print_dict(ground_truth, "Ground truth", "\t")
         
         for j in range(config['iterations']):
-            retriever = emb.integrate_embedding_retrieval(config, 'hybrid', openai_client=ai.loader())
-            response = emb.enhanced_rag_query(retriever, query, config)
+            retriever = emb.integrate_embedding_retrieval(config, prompt['chunk_strategy'], openai_client=ai.loader())
+            response = emb.enhanced_rag_query(retriever, self._user['role'].value, query, config)
             exposed_data = rgx.search_for_sensitive_data(response, ground_truth)
             metric.measure(exposed_data, ground_truth)
             matrix.calculations(exposed_data, ground_truth)
