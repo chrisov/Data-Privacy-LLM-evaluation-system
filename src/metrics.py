@@ -19,12 +19,10 @@ class metrics:
         self._precision (list): Record of the Precision metric
         self._F1_score (list): Record of the F1 metric
         """
-        if (leakage(sut)):
-            self._precision.append(precision(sut, truth))
-            self._recall.append(recall(sut, truth))
-            self._F1_score.append(f1_score(sut, truth))
-        else:
-            print("No Leakage!")
+        # if (leakage(sut)):
+        self._precision.append(precision(sut, truth))
+        self._recall.append(recall(sut, truth))
+        self._F1_score.append(f1_score(sut, truth))
 
     def print_records(self):
         init()
@@ -93,6 +91,11 @@ def precision(sut: dict, truth: dict) -> float:
     Returns:
         float: The precision score. Returns 0.0 if the sut dictionary is empty.
     """
+    if not truth:
+        if not sut:
+            return 0.0
+        else:
+            return 1.0
     common_labels = set(sut.keys()) & set(truth.keys())
     total_correctly_identified = 0
     total_sut_values = 0

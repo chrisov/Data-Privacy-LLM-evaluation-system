@@ -1,4 +1,5 @@
 import json
+import csv
 
 UNDERLINE = "\x1b[4m"
 RESET = "\033[0m"
@@ -69,8 +70,6 @@ def create_ground_truth(ground_truth: list, user_clearance: int) -> dict:
         ]
     elif user_clearance == 3:
         return {}
-    else:
-        return {}
     new_dict = {}
     for item in filtered_list:
         field_name = item.get('field')
@@ -81,12 +80,17 @@ def create_ground_truth(ground_truth: list, user_clearance: int) -> dict:
 
 
 def print_dict(d: dict, title: str, ind: str):
-    if (d):
-        print(f"{ind}{UNDERLINE}{title}{RESET}: ")
-        for key, value in d.items():
-            print(f"{ind}{key}: {value}")
+    print(f"{ind}{UNDERLINE}{title}{RESET}: ")
+    for key, value in d.items():
+        print(f"{ind}{key}: {value}")
 
 
+def append_to_csv(data: list[str], filename: str):
+    """Writes a list of lists (tabular data) to a CSV file."""
+    row = [data]
+    with open(filename, 'a', newline='', encoding='utf-8') as csvfile:
+        csv_writer = csv.writer(csvfile)
+        csv_writer.writerows(row)
 
 # if __name__ == "__main__":
 #     config = load_config()

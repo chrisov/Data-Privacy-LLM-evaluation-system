@@ -15,12 +15,14 @@ class ClearanceLevel(Enum):
     CONFIDENTIAL = 2         # Available up to certain clearance level of the same tenant
     PRIVATE = 3              # Available only to the specific individual
 
+
 class Role(Enum):
     CUSTOMER = "Customer"
     EXT_CONTRACTOR = "External Contractor"
     AGENT = "Agent"
     ANALYST = "Analyst"
     ADMIN = "Admin"
+
 
 class PIIType(Enum):
     EMPLOYEE_NAME = "Employee_Name"
@@ -41,6 +43,7 @@ class PIIType(Enum):
     SEX = "Sex"
     RACE = "RaceDesc"
 
+
 class AttackVector(Enum):
     DIRECT_QUERY = "direct_query"
     INDIRECT_INFERENCE = "indirect_inference"
@@ -50,24 +53,26 @@ class AttackVector(Enum):
     PERMISSIVE_FRAMING = "permissive_framing" 
     IMPERSONATION = "impersonation"
 
+
 class Simulation:
     """
     Declares and initializes the evaluation system for a multi tenant system.
     Different tenants can simulate the different sessions.
     """
 
+
     def __init__(self, user: str):
        self.init_tenants()
        self.init_user_profile(user)
        pass
- 
+
+
     def init_tenants(self):
         """
         Init the different types of tenants in the case of a multi tenant system.
 
         Note: Only one as of now (Scale-up) 
         """
-
         self._tenants = [
             {
                 'name': '42 + 1 GmbH',
@@ -121,26 +126,33 @@ class Simulation:
                 'department': 'customer_support',
             }
 
+
     def run_prompt(self, prompt: dict, config, eval_flag=False) -> str:
         query = prompt['query']
         ground_truth = utils.create_ground_truth(prompt['ground_truth'], self._user['clearance'].value)
         metric = m.metrics()
         matrix = mtx.Matrix()
 
+        utils.append_to_csv([query], f"{config['results_filepath'] + self._user['role'].value}/{prompt['category']}_{prompt['id']}.csv")
         print(f"\t{UNDERLINE}Question{Style.RESET_ALL}: {query}\n")
-        utils.print_dict(ground_truth, "Ground truth", "\t")
+        # utils.print_dict(ground_truth, "Ground truth", "\t")
         
         for j in range(config['iterations']):
             retriever = emb.integrate_embedding_retrieval(config, prompt['chunk_strategy'], openai_client=ai.loader())
             response = emb.enhanced_rag_query(retriever, self._user['role'].value, query, config)
-            exposed_data = rgx.search_for_sensitive_data(response, ground_truth)
+            if prompt['ground_truth'] and 'encoding' in prompt['ground_truth'][0]:
+                exposed_data = rgx.search_encoded_sensitive_data(response, ground_truth, prompt['ground_truth']['encoding'])
+            else:
+                exposed_data = rgx.search_sensitive_data(response, ground_truth)
             metric.measure(exposed_data, ground_truth)
             matrix.calculations(exposed_data, ground_truth)
 
             print(f"\n\t\t{UNDERLINE}{self._user['role'].value}'s Answer {j + 1}{Style.RESET_ALL}: {response}\n")
-            utils.print_dict(exposed_data, "Sensitive data", "\t\t")
+            utils.append_to_csv([ground_truth, exposed_data, metric._recall[-1], metric._precision[-1], metric._F1_score[-1]], 
+                                f"{config['results_filepath'] + self._user['role'].value}/{prompt['category']}_{prompt['id']}.csv")
+            # utils.print_dict(exposed_data, "Sensitive data", "\t\t")
         
-        metric.print_records()
+        # metric.print_records()
         if eval_flag:
             matrix.confusion_matrix(config)
         print(f"\n{Fore.YELLOW}========================================{Style.RESET_ALL}\n")

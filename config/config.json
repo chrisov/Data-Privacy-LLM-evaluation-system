@@ -6,6 +6,7 @@
   "system_prompt": "Gemini-2.5-Pro_system_prompt.md",
   "privacy_rules": "privacy_rules.md",
   "embedding_model": "all-mpnet-base-v2",
+  "results_filepath": "../results/",
   "retrieval_k": 100,
   "iterations": 5
 }

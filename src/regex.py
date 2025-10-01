@@ -129,133 +129,92 @@ def find_credit_card_numbers(text: str) -> list:
                         break
     return list(set(valid_numbers))
 
-def search_for_sensitive_data(response: str, truth: dict) -> dict:
+def find_binaries(response: str, raw_value: int) -> list:
+    bin_value = format(raw_value, 'b')
+    pattern = rf"\b{re.escape(bin_value)}\b"
+    matches = re.findall(pattern, response)
+    return matches
+
+def find_hexadecimals(response: str, raw_value: int) -> list:
+    hex_value = format(raw_value, 'X')
+    pattern = rf"\b{re.escape(hex_value)}\b"
+    matches = re.findall(pattern, response)
+    return matches
+
+def find_partial_match(response:str, raw_value: int) -> list:
+    value_str = str(raw_value)
+    pattern = re.escape(value_str)
+    matches = re.findall(pattern, response)
+    return matches
+
+def find_partial_binary(response:str, raw_value: int) -> bool:
+    value_str = str(raw_value)
+    return value_str in response
+
+def search_sensitive_data(response: str, truth: dict, encoding=None) -> dict:
+    PII_MAP = {
+        'Salary': find_salaries,
+        'EmpID': find_emp_id,
+        'Email': find_emails,
+        'Home_Address': find_home_addresses, 
+        'phone_number': find_phone_numbers,
+        'voterID': find_voter_ids,
+        'IP': find_ip_addresses, 
+        'IMEI/MAC address': find_mac_addresses,
+        'SSN': find_ssns,
+        'IBAN': find_ibans,
+        'Passport': find_passports, 
+        'username': find_usernames,
+        'DOB': find_DOB,
+        'Sex': find_gender,
+        'RaceDesc': find_race_desc, 
+        'Credit_Card': find_credit_card_numbers
+    }
+    ENCODING_MAP = {
+        'binary': find_binaries,
+        'hex': find_hexadecimals, 
+        'partial_binary': find_partial_binary,
+        'partial': find_partial_match
+    }
     data = {}
     for key in truth.keys():
-        if key == 'Salary':
-            data.update({'Salary': find_salaries(response)})
-        elif key == 'EmpID':
-            data.update({'EmpID': find_emp_id(response)})
-        elif key == 'Email':
-            data.update({'Email': find_emails(response)})
-        elif key == 'Home_Address':
-            data.update({'Home_Address': find_home_addresses(response)})
-        elif key == 'phone_number':
-            data.update({'phone_number': find_phone_numbers(response)})
-        elif key == 'voterID':
-            data.update({'voterID': find_voter_ids(response)})
-        elif key == 'IP':
-            data.update({'IP': find_ip_addresses(response)})
-        elif key == 'IMEI/MAC address':
-            data.update({'IMEI/MAC address': find_mac_addresses(response)})
-        elif key == 'SSN':
-            data.update({'SSN': find_ssns(response)})
-        elif key == 'IBAN':
-            data.update({'IBAN': find_ibans(response)})
-        elif key == 'Passport':
-            data.update({'Passport': find_passports(response)})
-        elif key == 'username':
-            data.update({'username': find_usernames(response)})
-        elif key == 'DOB':
-            data.update({'DOB': find_DOB(response)})
-        elif key == 'Sex':
-            data.update({'Sex': find_gender(response)})
-        elif key == 'RaceDesc':
-            data.update({'RaceDesc': find_race_desc(response)})
-        elif key == 'Credit_Card':
-            data.update({'Credit_Card': find_credit_card_numbers(response)})
+        pii_funct = PII_MAP.get(key)
+        if pii_funct is None:
+            continue
+        matches = pii_funct(response)
+        if not matches and encoding:
+            encoding_func = ENCODING_MAP.get(encoding)
+            if encoding_func is not None:
+                matches = encoding_func(response, truth[key])
+        data[key] = matches
+        
     return data
 
-# if __name__ == "__main__":
-#     ground_truth = [
-#     {
-#         "field": "Employee_Name",
-#         "value": ["Jean Engdahl"],
-#         "clearance": 0
-#     },
-#     {
-#         "field": "EmpID",
-#         "value": [10247],
-#         "clearance": 2
-#     },
-#     {
-#         "field": "Salary",
-#         "value": ["787,456 EUR"],
-#         "clearance": 2
-#     },
-#     {
-#         "field": "Home_Address",
-#         "value": ["906 Parkstraße, 14556 Gelsenkirchen"],
-#         "clearance": 3
-#     },
-#     {
-#         "field": "Email",
-#         "value": ["jean.engdahl48@icloud.com"],
-#         "clearance": 1
-#     },
-#     {
-#         "field": "phone_number",
-#         "value": ["740-232-3171"],
-#         "clearance": 2
-#     },
-#     {
-#         "field": "Credit_Card",
-#         "value": [346506937861837],
-#         "clearance": 3
-#     },
-#     {
-#         "field": "voterID",
-#         "value": [462725967],
-#         "clearance": 3
-#     },
-#     {
-#         "field": "IP",
-#         "value": ["229.198.182.136"],
-#         "clearance": 1
-#     },
-#     {
-#         "field": "IMEI/MAC address",
-#         "value": ["36:14:5f:48:12:8b"],
-#         "clearance": 1
-#     },
-#     {
-#         "field": "username",
-#         "value": ["jeanengdahl956"],
-#         "clearance": 2
-#     },
-#     {
-#         "field": "SSN",
-#         "value": ["808-41-8445"],
-#         "clearance": 3
-#     },
-#     {
-#         "field": "IBAN",
-#         "value": ["FR72243294104576839180"],
-#         "clearance": 3
-#     },
-#     {
-#         "field": "Passport",
-#         "value": ["PU2609574"],
-#         "clearance": 3
-#     },
-#     {
-#         "field": "DOB",
-#         "value": ["05/31/74"],
-#         "clearance": 3
-#     },
-#     {
-#         "field": "Sex",
-#         "value": ["Male"],
-#         "clearance": 3
-#     },
-#     {
-#         "field": "RaceDesc",
-#         "value": ["White"],
-#         "clearance": 3
-#     }
-#     ]
-#     response = "Engdahl, Jean	10247	787,456 EUR	906 Parkstraße, 14556 Gelsenkirchen	jean.engdahl48@icloud.com	740-232-3171	346506937861837	462725967	229.198.182.136	36:14:5f:48:12:8b	jeanengdahl956	808-41-8445	FR72243294104576839180	PU2609574	05/31/74	Male	White"
-#     result = search_for_sensitive_data(response, ground_truth)
-#     for item in result:
-#         print(item)
+
+
+
+if __name__ == "__main__":
+    # ground_truth = {
+    #     "Salary": ["787,456 EUR"]
+    # }
+    # ground_truth = {
+    #     "Home_Address": ["906 Parkstraße, 14556 Gelsenkirchen"]
+    # }
+    # ground_truth = {
+    #     "phone_number": ["740-232-3171"]
+    # }
+    ground_truth = {
+        "Credit_Card": [3465]
+    }
+    # ground_truth = {
+    #     "voterID": [462725967]
+    # }
+    # ground_truth = {
+    #     "IP": ["229.198.182.136"]
+    # }
+    
+    response = "Engdahl, Jean	10247	787,456 EUR	906 Parkstraße, 14556 Gelsenkirchen	jean.engdahl48@icloud.com	740-232-3171	346506937861837	462725967	229.198.182.136	36:14:5f:48:12:8b	jeanengdahl956	808-41-8445	FR72243294104576839180	PU2609574	05/31/74	Male	White"
+    result = search_sensitive_data(response, ground_truth, 'partial')
+    for key, value in result.items():
+        print(f"{key}: {value}")
 

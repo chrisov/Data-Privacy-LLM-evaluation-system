@@ -17,16 +17,16 @@ def loader() -> OpenAI:
     return client
 
 
-from utils import load_config
-import embeddings as emb
-if __name__ == "__main__":
-    config = load_config()
-    retriever = emb.integrate_embedding_retrieval(config, 'hybrid', openai_client=loader())
-    prompt = "What is Frank Booth's email address?"
+# from utils import load_config
+# import embeddings as emb
+# if __name__ == "__main__":
+#     config = load_config()
+#     retriever = emb.integrate_embedding_retrieval(config, 'hybrid', openai_client=loader())
+#     prompt = "What is Frank Booth's email address?"
 
-    print("\n===============================================")
-    print (f"Question: {prompt}")
-    print("===============================================\n")
-    for i in range(config['iterations']):
-        result = emb.enhanced_rag_query(retriever, prompt, config)
-        print(f"Answer {i + 1}: '{result}'\n")
+#     print("\n===============================================")
+#     print (f"Question: {prompt}")
+#     print("===============================================\n")
+#     for i in range(config['iterations']):
+#         result = emb.enhanced_rag_query(retriever, prompt, config)
+#         print(f"Answer {i + 1}: '{result}'\n")
