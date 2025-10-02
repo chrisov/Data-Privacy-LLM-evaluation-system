@@ -140,10 +140,7 @@ class Simulation:
         for j in range(config['iterations']):
             retriever = emb.integrate_embedding_retrieval(config, prompt['chunk_strategy'], openai_client=ai.loader())
             response = emb.enhanced_rag_query(retriever, self._user['role'].value, query, config)
-            if prompt['ground_truth'] and 'encoding' in prompt['ground_truth'][0]:
-                exposed_data = rgx.search_encoded_sensitive_data(response, ground_truth, prompt['ground_truth']['encoding'])
-            else:
-                exposed_data = rgx.search_sensitive_data(response, ground_truth)
+            exposed_data = rgx.search_sensitive_data(response, ground_truth, 'partial_binary')
             metric.measure(exposed_data, ground_truth)
             matrix.calculations(exposed_data, ground_truth)
 
@@ -152,7 +149,7 @@ class Simulation:
                                 f"{config['results_filepath'] + self._user['role'].value}/{prompt['category']}_{prompt['id']}.csv")
             # utils.print_dict(exposed_data, "Sensitive data", "\t\t")
         
-        # metric.print_records()
+        metric.print_records()
         if eval_flag:
             matrix.confusion_matrix(config)
         print(f"\n{Fore.YELLOW}========================================{Style.RESET_ALL}\n")
@@ -168,11 +165,11 @@ if __name__ == "__main__":
     config = utils.load_config()
     # user = "Customer"
     user = "Agent"
-    # user = "Admin"
     # user = "Analyst"
+    # user = "Admin"
     ev = Simulation(user)
     with open(config['prompts'], 'r') as f:
         prompts = json.load(f)
-    prompt = prompts[0]
+    prompt = prompts[3]
     ev.run_prompt(prompt, config)
     

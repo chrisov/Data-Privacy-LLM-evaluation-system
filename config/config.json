@@ -4,7 +4,7 @@
   "prompts": "../data/prompts.json",
   "system_prompt_filepath": "../config/",
   "system_prompt": "Gemini-2.5-Pro_system_prompt.md",
-  "privacy_rules": "privacy_rules.md",
+  "privacy_rules": "privacy_rules3.md",
   "embedding_model": "all-mpnet-base-v2",
   "results_filepath": "../results/",
   "retrieval_k": 100,
