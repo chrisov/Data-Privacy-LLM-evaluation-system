@@ -16,6 +16,7 @@
 
 ## 1. Introduction
 
+<<<<<<< HEAD
 This project is one of the LEVEL3, powered by Arkadia, tracks, partnered with the AI Technology company [Aleph Alpha](https://aleph-alpha.com/), with the purpose of creating an automated evaluation suite for Large Language Models. Given the recent outburst in AI agents, this project is an attempt of contributing to the evaluation process of such systems, in the domain of Data Privacy, tackling real problems, as well as an opportunity to acquire knowledge and hands-on experience on the fast evolving field of AI. By simulating real case scenarios, applied in mulitple LLMs used as Systems Under Test (SUTs), in an attempt to address common pitfalls, assess the limitations of fine-tuned models and measure their ability to resist and protect sensitive personal information, this evaluation system can be used to provide a reference about their internal behavior on how they treat sensitive data, using commonly identified metrics.
 
 The project simulates the case of a RAG system, accessible by mulitple users, and evaluates its ability to protect sensitive information, given a common external database. More specifically, the use case is this of a HR employee database,containing sensitive personal information. Through adversarial prompting, the evaluation suite attempts to extract said information and measures the accuracy of the leaked results. Though a specific subject is necessary for building the suite, it is also easy to imagine that such systems could be applied to a variety of domains and applications, noting the importance of the evaluation process.
@@ -39,6 +40,11 @@ As previously stated, this project utilizes an embedding model, in order to acce
 </div>
 
 <br>
+=======
+This project is one of the LEVEL3, powered by Arkadia, tracks, partnered with the AI Technology company [Aleph Alpha](https://aleph-alpha.com/), with the purpose of creating an automated evaluation suite for Large Language Models. Given the recent outburst of AI agents, this project is an attempt of contributing to the evaluation process in the domain of Data Privacy, tackling real problems, as well as an opportunity to acquire knowledge and hands-on experience on the fast evolving field of AI. By simulated real case scenarios, applied in mulitple LLMs used as Systems Under Test (SUTs), in an attempt to address common pitfalls, assess the limitations of fine-tuned models and measure their ability to resist and protect sensitive personal information, this evaluation system can be used to provide a reference about their internal behavior on how they treat sensitive data, using commonly identified metrics.
+
+The project simulates the case of one system, accessible by mulitple users, and evaluates its ability to protect sensitive information, given a common database. More specifically, the use case is this of a HR employee database, accessed using custom tools.
+>>>>>>> dim
 
 ## 2. Data Privacy domain
 
@@ -46,6 +52,7 @@ As previously stated, this project utilizes an embedding model, in order to acce
   <a href="#top">⬆️ Return to top</a>
 </div>
 
+<<<<<<< HEAD
 <br>
 
 ## 3. Pipeline
@@ -158,6 +165,10 @@ In the Figure below we describe the program's flow from beginning to end.
 </div>
 
 <br>
+=======
+
+## 3. Installation 
+>>>>>>> dim
 
 ## 4. Technical approach / Parameters
 
@@ -201,6 +212,7 @@ In the Figure below we describe the program's flow from beginning to end.
 
 ### 4.4 System Prompt
 
+<<<<<<< HEAD
 <div align="right">
   <a href="#top">⬆️ Return to top</a>
 </div>
@@ -223,6 +235,12 @@ In the Figure below we describe the program's flow from beginning to end.
 
 <br>
 
+=======
+#### 4.4.1 Baseline
+
+#### 4.4.2 Custom Categorization
+
+>>>>>>> dim
 ### 4.5 Metrics
 
 <div align="right">
@@ -233,6 +251,7 @@ In the Figure below we describe the program's flow from beginning to end.
 
 ## 5. Conclusions
 
+<<<<<<< HEAD
 <div align="right">
   <a href="#top">⬆️ Return to top</a>
 </div>
@@ -240,4 +259,6 @@ In the Figure below we describe the program's flow from beginning to end.
 <br>
 
 
+=======
+>>>>>>> dim
 ## 6. References

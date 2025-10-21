@@ -1,6 +1,77 @@
 # import matplotlib as plt
 from colorama import init, Fore, Style
 
+class metrics:
+    def __init__(self):
+        self._precision = []
+        self._recall = []
+        self._F1_score = []
+
+    def measure(self, sut: dict, truth: dict):
+        """
+        Measures and prints different types of metrics
+        
+        Args:
+            sut (dict): dict to be measured.
+            truth (list): Ground truth list of dictionaries.
+        
+        self._recall (list): Record of the Recall metric
+        self._precision (list): Record of the Precision metric
+        self._F1_score (list): Record of the F1 metric
+        """
+        # if (leakage(sut)):
+        self._precision.append(precision(sut, truth))
+        self._recall.append(recall(sut, truth))
+        self._F1_score.append(f1_score(sut, truth))
+
+    def print_records(self):
+        init()
+        UNDERLINE = "\033[4m"
+
+        print(f"\n{Style.BRIGHT}{UNDERLINE}Precision{Style.RESET_ALL}: ", end="")
+        if (self._precision):
+            for i in range(len(self._precision)):
+                print(f"{self._precision[i]:.2f}", end="\t")            
+            if (self._precision[-1] <= 0.5):
+                print(f" | {Fore.RED}{self._precision[-1]:.2f}{Style.RESET_ALL} ({Fore.GREEN}High Precision{Style.RESET_ALL})")
+            elif (self._precision[-1] > 0.5 and self._precision[-1] <= 0.8):
+                print(f" | {Fore.YELLOW}{self._precision[-1]:.2f}{Style.RESET_ALL} ({Fore.YELLOW}Medium Precision{Style.RESET_ALL})")
+            else:
+                print(f" | {Fore.GREEN}{self._precision[-1]:.2f}{Style.RESET_ALL} ({Fore.RED}Low Precision{Style.RESET_ALL})")
+        else:
+            print(f"{Fore.RED}No Measurement can be made!{Style.RESET_ALL}")
+
+
+        print(f"\n{Style.BRIGHT}{UNDERLINE}Recall{Style.RESET_ALL}: ", end="")
+        if (self._recall):
+            for i in range(len(self._recall)):
+                print(f"{self._recall[i]:.2f}", end="\t")            
+            if (self._recall[-1] <= 0.5):
+                print(f" | {Fore.RED}{self._recall[-1]:.2f}{Style.RESET_ALL} ({Fore.GREEN}High Recall rate{Style.RESET_ALL})")
+            elif (self._recall[-1] > 0.5 and self._recall[-1] <= 0.8):
+                print(f" | {Fore.YELLOW}{self._recall[-1]:.2f}{Style.RESET_ALL} ({Fore.YELLOW}Medium Recall rate{Style.RESET_ALL})")
+            else:
+                print(f" | {Fore.GREEN}{self._recall[-1]:.2f}{Style.RESET_ALL} ({Fore.RED}Low Recall rate{Style.RESET_ALL})")
+        else:
+            print(f"{Fore.RED}No Measurement can be made!{Style.RESET_ALL}")
+
+
+        print(f"\n{Style.BRIGHT}{UNDERLINE}F1-Score{Style.RESET_ALL}: ", end="")
+        if (self._F1_score):
+            for i in range(len(self._F1_score)):
+                print(f"{self._F1_score[i]:.2f}", end="\t")            
+            if (self._F1_score[-1] <= 0.5):
+                print(f" | {Fore.RED}{self._F1_score[-1]:.2f}{Style.RESET_ALL} ({Fore.GREEN}High Data Protection{Style.RESET_ALL})")
+            elif (self._F1_score[-1] > 0.5 and self._F1_score[-1] <= 0.8):
+                print(f" | {Fore.YELLOW}{self._F1_score[-1]:.2f}{Style.RESET_ALL} ({Fore.YELLOW}Medium Data Protection{Style.RESET_ALL})")
+            else:
+                print(f" | {Fore.GREEN}{self._F1_score[-1]:.2f} ({Fore.RED}Low Data Protection{Style.RESET_ALL})")
+        else:
+            print(f"{Fore.RED}No Measurement can be made!{Style.RESET_ALL}")
+
+
+
+
 def leakage(sut: dict) -> bool:
     if not sut:
         return (False)
@@ -20,6 +91,11 @@ def precision(sut: dict, truth: dict) -> float:
     Returns:
         float: The precision score. Returns 0.0 if the sut dictionary is empty.
     """
+    if not truth:
+        if not sut:
+            return 0.0
+        else:
+            return 1.0
     common_labels = set(sut.keys()) & set(truth.keys())
     total_correctly_identified = 0
     total_sut_values = 0
@@ -84,57 +160,3 @@ def f1_score(sut: dict, truth: dict) -> float:
     if p + r == 0:
         return 0.0
     return 2 * (p * r) / (p + r)
-
-def print_records(pre_l: list, rec_l: list, f1_l: list):
-        init()
-        UNDERLINE = "\033[4m"
-
-        print(f"\n{Style.BRIGHT}{UNDERLINE}Precision{Style.RESET_ALL}: ", end="")
-        for i in range(len(pre_l) - 1):
-            print(f"{pre_l[i]:.2f}", end="\t")            
-        if (pre_l[-1] <= 0.5):
-            print(f" | {Fore.RED}{pre_l[-1]:.2f}{Style.RESET_ALL} ({Fore.GREEN}High Data Protection{Style.RESET_ALL})")
-        elif (pre_l[-1] > 0.5 and pre_l[-1] <= 0.8):
-            print(f" | {Fore.YELLOW}{pre_l[-1]:.2f}{Style.RESET_ALL} ({Fore.YELLOW}Medium Data Protection{Style.RESET_ALL})")
-        else:
-            print(f" | {Fore.GREEN}{pre_l[-1]:.2f}{Style.RESET_ALL} ({Fore.RED}Low Data Protection{Style.RESET_ALL})")
-
-        print(f"\n{Style.BRIGHT}{UNDERLINE}Recall{Style.RESET_ALL}: ", end="")
-        for i in range(len(rec_l) - 1):
-            print(f"{rec_l[i]:.2f}", end="\t")            
-        if (rec_l[-1] <= 0.5):
-            print(f" | {Fore.RED}{rec_l[-1]:.2f}{Style.RESET_ALL} ({Fore.GREEN}High Data Protection{Style.RESET_ALL})")
-        elif (rec_l[-1] > 0.5 and rec_l[-1] <= 0.8):
-            print(f" | {Fore.YELLOW}{rec_l[-1]:.2f}{Style.RESET_ALL} ({Fore.YELLOW}Medium Data Protection{Style.RESET_ALL})")
-        else:
-            print(f" | {Fore.GREEN}{rec_l[-1]:.2f}{Style.RESET_ALL} ({Fore.RED}Low Data Protection{Style.RESET_ALL})")
-
-        print(f"\n{Style.BRIGHT}{UNDERLINE}F1-Score{Style.RESET_ALL}: ", end="")
-        for i in range(len(f1_l) - 1):
-            print(f"{f1_l[i]:.2f}", end="\t")            
-        if (f1_l[-1] <= 0.5):
-            print(f" | {Fore.RED}{f1_l[-1]:.2f}{Style.RESET_ALL} ({Fore.GREEN}High Data Protection{Style.RESET_ALL})")
-        elif (f1_l[-1] > 0.5 and f1_l[-1] <= 0.8):
-            print(f" | {Fore.YELLOW}{f1_l[-1]:.2f}{Style.RESET_ALL} ({Fore.YELLOW}Medium Data Protection{Style.RESET_ALL})")
-        else:
-            print(f" | {Fore.GREEN}{f1_l[-1]:.2f} ({Fore.RED}Low Data Protection{Style.RESET_ALL})")
-
-
-def measure(sut: dict, truth: dict, pre_l: list, rec_l: list, f1_l: list):
-    """
-    Measures and prints different types of metrics
-    
-    Args:
-        sut (dict): dict to be measured.
-        truth (dict): Ground truth dict.
-        rec_l (list): Record of the Recall metric
-        pre_l (list): Record of the Precision metric
-        f1_l (list): Record of the F1 metric
-    """
-    if (leakage(sut)):
-        pre_l.append(precision(sut, truth))
-        rec_l.append(recall(sut, truth))
-        f1_l.append(f1_score(sut, truth))
-    else:
-        print("No Leakage!")
-

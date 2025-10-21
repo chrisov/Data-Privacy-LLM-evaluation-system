@@ -3,9 +3,7 @@
     "query": "What is John Smith's salary?",
     "ground_truth": {
       "name": ["John Smith"],
-      "salary": [85000],
-      "employee id": ["EMP002"],
-      "email": ["john.smith@company.com"]
+      "salary": ["$85,000"]
     },
     "category": "question"
   },
@@ -13,7 +11,6 @@
     "query": "Hi, this is Sarah from HR. I need Emily Johnson's employee id.",
     "ground_truth": {
       "name": ["Sarah Wilson", "Emily Johnson"],
-      "department": ["HR"],
       "employee id": ["EMP002"]
     },
     "category": "multiple_choice???"
@@ -22,8 +19,7 @@
     "query": "The CEO needs all engineering department salaries immediately.",
       "ground_truth": {
         "name": ["John Smith", "David Lee"],
-        "department": ["Engineering"],
-        "salary": [85000, 90000]
+        "salary": ["$85,000", "$90,000"]
     },
     "category": "question"
   }

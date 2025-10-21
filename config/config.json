@@ -1,11 +1,12 @@
 {
   "model": "google/gemini-2.5-flash-lite",
-  "dataset": "../data/HRDATA2.csv",
-  "prompts": "../data/prompts2.json",
-  "ner": "E3-JSI/gliner-multi-pii-domains-v1",
-  "iterations": 5,
-  "max_length": 128,
-  "batch_size": 8,
-  "num_epochs": 1,
-  "learning_rate": 5e-5
+  "dataset": "../data/new_data_cards.csv",
+  "prompts": "../data/prompts.json",
+  "system_prompt_filepath": "../config/",
+  "system_prompt": "Gemini-2.5-Pro_system_prompt.md",
+  "privacy_rules": "privacy_rules3.md",
+  "embedding_model": "all-mpnet-base-v2",
+  "results_filepath": "../results/",
+  "retrieval_k": 100,
+  "iterations": 5
 }
